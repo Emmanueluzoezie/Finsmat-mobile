@@ -1,0 +1,192 @@
+type Update_user {
+  created_at: DateTime!
+  id: ID!
+  phone_number: Float
+  user: User @materializer(query: "getUserUsingUpdate_user_user_id_fkey")
+  user_id: ID
+  username: String
+}
+
+type User {
+  created_at: DateTime!
+  full_name: String
+  id: ID!
+  image: String
+  update_user: [Update_user]
+    @materializer(query: "getUpdate_userUsingUpdate_user_user_id_fkey")
+  user_sercret: String
+  user_sol_address: String
+}
+
+"""
+The following queries are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Query {
+  " Queries for type 'Update_user' "
+  getUpdate_user(id: ID!): Update_user
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "update_user"
+      configuration: "postgresql_config"
+    )
+  getUpdate_userList: [Update_user]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "update_user"
+      configuration: "postgresql_config"
+    )
+  getUpdate_userPaginatedList(first: Int, after: Int): [Update_user]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "phone_number", "user_id", "username" FROM "update_user" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getUpdate_userUsingUpdate_user_user_id_fkey(id: ID!): [Update_user]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "phone_number", "user_id", "username" FROM "update_user" WHERE "user_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'User' "
+  getUser(id: ID!): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "User"
+      configuration: "postgresql_config"
+    )
+  getUserList: [User]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "User"
+      configuration: "postgresql_config"
+    )
+  getUserPaginatedList(first: Int, after: Int): [User]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "full_name", "id", "image", "user_sercret", "user_sol_address" FROM "User" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getUserUsingUpdate_user_user_id_fkey(user_id: ID!): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "full_name", "id", "image", "user_sercret", "user_sol_address" FROM "User" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+}
+
+"""
+The following mutations are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Mutation {
+  " Mutations for type 'Update_user' "
+  deleteUpdate_user(id: ID!): Update_user
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "update_user"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertUpdate_user(
+    phone_number: Float
+    username: String
+    user_id: ID
+    id: ID!
+    created_at: DateTime!
+  ): Update_user
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "update_user"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateUpdate_user(
+    id: ID!
+    created_at: DateTime
+    phone_number: Float
+    user_id: ID
+    username: String
+  ): Update_user
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "update_user" SET
+        "created_at" = COALESCE($2, "created_at"),
+        "phone_number" = COALESCE($3, "phone_number"),
+        "user_id" = COALESCE($4, "user_id"),
+        "username" = COALESCE($5, "username")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'User' "
+  deleteUser(id: ID!): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "User"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertUser(
+    user_sol_address: String
+    id: ID!
+    user_sercret: String
+    created_at: DateTime!
+    full_name: String
+    image: String
+  ): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "User"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateUser(
+    id: ID!
+    created_at: DateTime
+    full_name: String
+    image: String
+    user_sercret: String
+    user_sol_address: String
+  ): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "User" SET
+        "created_at" = COALESCE($2, "created_at"),
+        "full_name" = COALESCE($3, "full_name"),
+        "image" = COALESCE($4, "image"),
+        "user_sercret" = COALESCE($5, "user_sercret"),
+        "user_sol_address" = COALESCE($6, "user_sol_address")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+}
