@@ -4,10 +4,11 @@ import tailwind from 'twrnc'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAppTheme, selectWeb3Auth, setKey, setUserInfo } from '../slice/AppSlices'
+import { selectAppTheme, } from '../slice/AppSlices'
 import { appColor } from './AppColor'
 import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import { solanaAddress } from '../utilies/solana'
+import { selectWeb3Auth } from '../slice/userSlice'
 
 const emailValidation = yup.object().shape({
     email: yup

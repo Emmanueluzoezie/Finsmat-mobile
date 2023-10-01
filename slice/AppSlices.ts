@@ -4,24 +4,20 @@ import type { RootState } from "../app/store"
 
 interface AppState {
     isUserLogin: boolean;
+    newUser: boolean;
     appTheme: string;
     currentScreen: string;
     openOtpScreen: boolean;
-    key: any;
-    userInfo: any;
-    console: any;
-    web3auth: any;
+    currentArticleScreen: string
 }
 
 const initialState: AppState = {
     isUserLogin: true,
+    newUser: true,
     appTheme: "dark",
     currentScreen: "home",
     openOtpScreen: false,
-    key: "",
-    userInfo: "",
-    console: "",
-    web3auth: null
+    currentArticleScreen: "latest_article"
 }
 
 export const appSlice = createSlice({
@@ -31,20 +27,11 @@ export const appSlice = createSlice({
         setIsUserLogin: (state, action: PayloadAction<boolean>) => {
             state.isUserLogin = action.payload;
         },
+        setNewUser: (state, action: PayloadAction<boolean>) => {
+            state.newUser = action.payload;
+        },
         setAppTheme: (state, action: PayloadAction<string>) => {
             state.appTheme = action.payload;
-        },
-        setKey: (state, action: PayloadAction<any>) => {
-            state.key = action.payload;
-        },
-        setUserInfo: (state, action: PayloadAction<any>) => {
-            state.userInfo = action.payload;
-        },
-        setConsole: (state, action: PayloadAction<any>) => {
-            state.console = action.payload;
-        },
-        setWeb3Auth: (state, action: PayloadAction<any>) => {
-            state.web3auth = action.payload;
         },
         setCurrentScreen: (state, action: PayloadAction<string>) => {
             state.currentScreen = action.payload;
@@ -52,19 +39,20 @@ export const appSlice = createSlice({
         setOpenOtpScreen: (state, action: PayloadAction<boolean>) => {
             state.openOtpScreen = action.payload;
         },
+        setCurrentArticleScreen: (state, action: PayloadAction<string>) => {
+            state.currentArticleScreen = action.payload;
+        },
     }
 });
 
-export const { setIsUserLogin, setAppTheme, setCurrentScreen, setOpenOtpScreen, setKey, setUserInfo, setConsole, setWeb3Auth } = appSlice.actions;
+export const { setIsUserLogin, setNewUser, setAppTheme, setCurrentScreen, setOpenOtpScreen, setCurrentArticleScreen } = appSlice.actions;
 
 export const selectIsUserLogin = (state: RootState) => state.app.isUserLogin;
+export const selectNewUser = (state: RootState) => state.app.newUser;
 export const selectAppTheme = (state: RootState) => state.app.appTheme;
-export const selectKey = (state: RootState) => state.app.key;
-export const selectUserInfo = (state: RootState) => state.app.userInfo;
-export const selectConsole = (state: RootState) => state.app.console;
-export const selectWeb3Auth = (state: RootState) => state.app.web3auth;
 export const selectCurrentScreen = (state: RootState) => state.app.currentScreen;
 export const selectOpenOtpScreen = (state: RootState) => state.app.openOtpScreen;
+export const selectCurrentArticleScreen = (state: RootState) => state.app.currentArticleScreen;
 
 export default appSlice.reducer;
 

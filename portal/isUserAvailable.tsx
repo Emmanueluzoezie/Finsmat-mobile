@@ -6,7 +6,10 @@ import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from 'react-redux';
 import UnauthenticatedUser from './unauthenticatedUser';
 import AuthenticatedUser from "./authenticatedUser"
-import {  selectIsUserLogin, selectKey, setKey, setUserInfo, setWeb3Auth } from '../slice/AppSlices';
+import {  selectIsUserLogin, selectNewUser } from '../slice/AppSlices';
+import WelcomeQuestionsComponent from '../component/WelcomeQuestionsComponent';
+import tailwind from 'twrnc';
+import { selectKey, setKey, setUserInfo, setWeb3Auth } from '../slice/userSlice';
 
 const clientId = process.env.WEB3AUTH_CLIENT_ID
 
@@ -14,6 +17,7 @@ const IsUserAvailable = () => {
   const isUserAvailable = useSelector(selectIsUserLogin)
   const getKey = useSelector(selectKey)
   const dispatch = useDispatch()
+  const isNewUser = useSelector(selectNewUser)
 
 
   useEffect(() => {
@@ -37,16 +41,22 @@ const IsUserAvailable = () => {
   }, []);
 
   return(
-    <View style={styles.container}>
-      {isUserAvailable ? 
-        (
-          <AuthenticatedUser />
-        )
-      :
-        (
-          <UnauthenticatedUser />
-        )
-      }
+    <View style={tailwind`flex-1`}>
+      {isNewUser?
+        <WelcomeQuestionsComponent />
+        :
+        <View style={styles.container}>
+            {getKey ?
+              (
+                <AuthenticatedUser />
+              )
+              :
+              (
+                <UnauthenticatedUser />
+              )
+            }
+        </View>
+        }
     </View>
   )
 }

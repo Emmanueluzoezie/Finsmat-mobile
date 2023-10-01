@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAppTheme, selectWeb3Auth, setConsole, setKey, setUserInfo } from '../slice/AppSlices'
+import { selectAppTheme} from '../slice/AppSlices'
 import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import tailwind from 'twrnc'
 import { appColor } from '../component/AppColor'
@@ -10,21 +9,26 @@ import { Keypair } from '@solana/web3.js'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import SignupWIthEmail from '../component/SignupWIthEmail'
 import { solanaAddress } from '../utilies/solana'
+import { selectWeb3Auth, setConsole, setKey, setUserInfo } from '../slice/userSlice'
+import { useQuery } from '@apollo/client';
+import { GET_ALL_USER } from '../graphql/queries';
 
 
 const scheme = 'calbuild';
 const resolvedRedirectUrl = `${scheme}://web3auth`
 
 const UnauthenticatedUser = () => {
+  const [errorMessage, setErrorMessage] = useState("")
   const appTheme = useSelector(selectAppTheme)
   const web3auth = useSelector(selectWeb3Auth)
   const dispatch = useDispatch()
+  const { data, loading, error } = useQuery(GET_ALL_USER)
 
   const bgColor = appTheme === "dark"? appColor.darkBackground : appColor.lightBackground
 
   const textColor = appTheme === "dark"? appColor.darkTextColor : appColor.lightTextColor
 
-  const containerColor = appTheme === "dark" ? appColor.darkContainerBackground : appColor.lightContainerBackground
+  const containerColor = appTheme === "dark" ? appColor.inputDarkBgColor : appColor.inputLightBgColor
 
   const login = async (provider) => {
     try {
@@ -41,10 +45,19 @@ const UnauthenticatedUser = () => {
         dispatch(setKey(web3auth.privKey));
 
         // Create a new Solana address
-        await solanaAddress()
+        if (data) {
+          const alreadyExist = data.getUserList && data.getUserList.some((user) => user.email === web3auth.userInfo().email);
+
+          if (alreadyExist) {
+            return;
+          }
+          else{
+            await solanaAddress()
+          }
+        }
       }
     } catch (e) {
-      throw e;
+      setErrorMessage("Oops, something went wrong while signing in. Please check your internet connection and try again")
     }
   };
 
@@ -58,10 +71,17 @@ const UnauthenticatedUser = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={[{ zIndex: 1, flex: 1, paddingBottom: 10 }]}
           >
+           {errorMessage &&
+            <View style={tailwind`absolute top-[150px] w-full px-4`}>
+              <View style={[tailwind`px-4 py-2 rounded-md`, { backgroundColor: appColor.errorColor }]}>
+                <Text style={[tailwind`font-bold`, { color: "white" }]}>{errorMessage}</Text>
+              </View>
+            </View>
+           }
             <View style={[tailwind`flex-1 justify-center`]}>
               <View style={[tailwind`px-4`]}>
                 <View style={[tailwind`py-3`]}>
-                  <TouchableWithoutFeedback onPress={() => login(LOGIN_PROVIDER.GOOGLE)}>
+                  <TouchableOpacity onPress={() => login(LOGIN_PROVIDER.GOOGLE)}>
                       <View style={[
                     tailwind`flex-row justify-center items-center p-3 rounded-md`,
                         {backgroundColor: containerColor}
@@ -69,15 +89,15 @@ const UnauthenticatedUser = () => {
                     <Text style={[tailwind`font-semibold  pr-2`,
                       { color: textColor , letterSpacing: 0.6 }
                         ]}>Sign up with</Text>
-                        <Image source={require("../assets/google.png")} style={[tailwind`w-5 h-5`]} />
-                    <Text style={[tailwind`font-semibold`,
+                        <Image source={require("../assets/google.png")} style={[tailwind`w-4 h-4`]} />
+                    <Text style={[tailwind`font-semibold pl-[2px]`,
                           {color: textColor , letterSpacing: 0.6}
                         ]}>oogle</Text>
                       </View>
-                  </TouchableWithoutFeedback>
+                  </TouchableOpacity>
                 </View>
               <View style={[tailwind`py-3`]}>
-                <TouchableWithoutFeedback onPress={() => login(LOGIN_PROVIDER.FACEBOOK)}>
+                <TouchableOpacity onPress={() => login(LOGIN_PROVIDER.FACEBOOK)}>
                     <View style={[
                       tailwind`flex-row justify-center items-center p-3 rounded-md`,
                       {backgroundColor: containerColor}
@@ -85,15 +105,15 @@ const UnauthenticatedUser = () => {
                     <Text style={[tailwind`font-semibold pr-1`,
                         {color: textColor , letterSpacing: 0.6}
                       ]}>Sign up with</Text>
-                      <Image source={require("../assets/facebook.png")} style={[tailwind`w-3 h-5`]} />
+                      <Image source={require("../assets/facebook.png")} style={[tailwind`w-[10px] h-[16px]`]} />
                     <Text style={[tailwind`font-semibold pl-[1px]`,
                         {color: textColor , letterSpacing: 0.6}
                       ]}>acebook</Text>
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               </View>
               <View style={[tailwind`py-3`]}>
-                <TouchableWithoutFeedback onPress={() => login(LOGIN_PROVIDER.TWITTER)}>
+                <TouchableOpacity onPress={() => login(LOGIN_PROVIDER.TWITTER)}>
                     <View style={[
                     tailwind`flex-row justify-center items-center p-3 rounded-md`,
                       {backgroundColor: containerColor}
@@ -102,15 +122,15 @@ const UnauthenticatedUser = () => {
                         {color: textColor , letterSpacing: 0.6}
                       ]}>Sign up with</Text>
                       {appTheme === "dark"?
-                        <Image source={require("../assets/xcom.png")} style={[tailwind`w-5 h-5`]} />
+                        <Image source={require("../assets/xcom.png")} style={[tailwind`w-3 h-3`]} />
                         :
-                        <Image source={require("../assets/lightx.png")} style={[tailwind`w-5 h-5`]} />
+                        <Image source={require("../assets/lightx.png")} style={[tailwind`w-3 h-3`]} />
                       }
                       <Text style={[tailwind`font-semibold`,
                         {color: textColor , letterSpacing: 0.6}
                       ]}>(Twitter)</Text>
                     </View>
-                </TouchableWithoutFeedback>
+                </TouchableOpacity>
               </View>
 
                 <SignupWIthEmail />
@@ -130,5 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignContent: "center",
     width: "100%",
+    position: "relative"
   }
 })
