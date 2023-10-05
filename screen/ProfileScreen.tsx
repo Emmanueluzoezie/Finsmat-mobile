@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import tailwind from 'twrnc'
-import { selectAppTheme, selectWeb3Auth, setCurrentScreen } from '../slice/AppSlices'
+import { selectAppTheme } from '../slice/AppSlices'
 import { appColor } from '../component/AppColor'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation, useRoute } from '@react-navigation/native'

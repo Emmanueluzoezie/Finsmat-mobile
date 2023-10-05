@@ -24,10 +24,10 @@ const LeaderBoardHeader = ({ userInfo }) => {
       <TouchableOpacity style={[tailwind` rounded-full`, { backgroundColor: appColor.primaryDarkColor }]} onPress={() => navigation.navigate("profile")}>
         <Image source={{ uri: userInfo?.image }} style={tailwind`w-[35px] h-[35px] rounded-full`} />
       </TouchableOpacity>
-      <Text style={[tailwind`flex-1 text-center text-[18px] text-[${color}] capitalize font-bold`]}>Leaders Board</Text>
+      <Text style={[tailwind`flex-1 text-center text-[18px] text-[${color}] capitalize font-bold`, { fontFamily: 'Lato-Bold' }]}>Leaders Board</Text>
       <View style={tailwind`flex-row items-center`}>
-        <FontAwesome5 name="coins" size={16} color={color} />
-        <Text style={[tailwind`pl-2 text-[14px] text-[${color}] font-bold`]}>{userInfo?.coins}</Text>
+        <Image source={require("../assets/coins.png")} style={tailwind`w-[15px] h-[12px]`} />
+        <Text style={[tailwind`pl-1 text-[14px] text-[${color}] font-bold`, { fontFamily: 'Lato-Bold' }]}>{userInfo?.coins}</Text>
       </View>
     </View>
   )

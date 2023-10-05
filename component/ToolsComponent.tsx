@@ -27,8 +27,8 @@ const ToolsComponent = () => {
           ]}
               onPress={() => navigation.navigate("calculator")}>
               <View style={tailwind`flex-1`}>
-                <Text style={[tailwind`text-[16px] font-semibold`, { color }]}>Calculators</Text>
-                <Text style={[tailwind`text-[13px] pt-1`, { color }]}>Investment and compound calculator</Text>
+                <Text style={[tailwind`text-[16px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Calculators</Text>
+                <Text style={[tailwind`text-[13px] pt-1`, { color, fontFamily: 'Lato-Regular' }]}>Investment and compound calculator</Text>
               </View>
 
               <MaterialIcons name="chevron-right" size={30} color={color} />
@@ -39,8 +39,19 @@ const ToolsComponent = () => {
           ]}
               onPress={() => navigation.navigate("article")}>
              <View style={tailwind`flex-1`}>
-                  <Text style={[tailwind`text-[16px] font-semibold`, { color }]}>Explore Finance Articles</Text>
-                  <Text style={[tailwind`text-[13px] pt-1`, { color }]}>Enhance your financial knowledge by delving into finance articles</Text>
+                  <Text style={[tailwind`text-[16px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Explore Finance Articles</Text>
+                  <Text style={[tailwind`text-[13px] pt-1`, { color, fontFamily: 'Lato-Regular' }]}>Enhance your financial knowledge by delving into finance articles</Text>
+             </View>
+              <MaterialIcons name="chevron-right" size={30} color={color} />
+          </TouchableOpacity>
+          <TouchableOpacity style={[
+              tailwind`pl-3 py-4 my-1 mt-2 rounded-md  flex-row items-center`,
+              { backgroundColor: containerColor, borderColor: bgColor }
+          ]}
+              onPress={() => navigation.navigate("convert_token")}>
+             <View style={tailwind`flex-1`}>
+                  <Text style={[tailwind`text-[16px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Token Conversion</Text>
+                  <Text style={[tailwind`text-[13px] pt-1`, { color, fontFamily: 'Lato-Regular' }]}>Convert your points to token</Text>
              </View>
               <MaterialIcons name="chevron-right" size={30} color={color} />
           </TouchableOpacity>

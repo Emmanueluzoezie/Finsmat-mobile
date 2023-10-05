@@ -22,7 +22,7 @@ const BottomItem = ({ onPress, Icon, title, active, name, size }) => {
             ]}>
                 <Icon name={name} size={size} color={color} />
                 <Text style={[tailwind`font-bold text-[12px] mt-1`,
-                    { color: color }
+                    { color: color, fontFamily: 'Lato-Bold' }
                 ]}>{title}</Text>
             </View>
         </TouchableWithoutFeedback>

@@ -10,8 +10,17 @@ import tailwind from 'twrnc';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ApolloProvider } from '@apollo/client';
 import client from './apollo-client';
+import { useFonts } from 'expo-font';
 
 export default function App() {
+  let [fontLoaded] = useFonts({
+    "Lato-Regular": require("./assets/Lato/Lato-Regular.ttf"),
+    "Lato-Bold": require("./assets/Lato/Lato-Bold.ttf")
+  })
+
+  if (!fontLoaded) {
+    return undefined
+  }
 
   return (
     <ApolloProvider client={client}>

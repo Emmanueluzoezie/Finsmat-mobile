@@ -13,6 +13,8 @@ export const GET_USER_BY_EMAIL = gql`
             image
             created_at
             coins
+            username
+            isAdminUser
         }
     }
 `
@@ -30,6 +32,53 @@ export const GET_ALL_USER = gql`
             image
             created_at
             coins
+            username
+            isAdminUser
+        }
+    }
+`
+
+export const GET_ALL_QUESTIONS = gql`
+    query questionQuery{
+        getQuestionsList{
+            answer_a
+            answer_b
+            question_type
+            question_level
+            question
+            id
+            created_at
+            correct_answer
+            answer_c
+        }
+    }
+`
+
+export const GET_ALL_QUESTION_BY_TYPE = gql`
+    query userQuery($question_type: String!){
+        getQuestionsByType(question_type: $question_type){
+            answer_a
+            answer_b
+            question_type
+            question_level
+            question
+            id
+            created_at
+            correct_answer
+            answer_c
+        }
+    }
+`
+
+export const GET_ALL_HISTORY_BY_ID = gql`
+    query userQuery($user_id: ID!){
+        getHistoryByUser_Id(user_id: $user_id){
+            id,
+            created_at
+            title
+            user_id
+            amount
+            descriptions
         }
     }
 `

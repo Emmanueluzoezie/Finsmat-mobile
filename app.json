@@ -26,6 +26,13 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "assets": ["./assets/fonts/"],
+    "fonts": [
+      {
+        "Lato-Regular":"./assets/Lato/Lato-Regular.ttf",
+        "Lato-Bold": "./assets/Lato/Lato-Bold.ttf"
+      }
+    ]
   }
 }

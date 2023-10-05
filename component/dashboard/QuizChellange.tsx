@@ -26,13 +26,13 @@ const QuizChellange = () => {
             <View style={[tailwind`flex-row justify-between items-center p-2`]}>
                 <Text style={[
                     tailwind`font-semibold text-[16px]`,
-                    {color}
+                    {color, fontFamily: 'Lato-Bold'}
                     ]}>Quiz Challenge</Text>
                 <TouchableOpacity onPress={() => navigation.navigate("quiz")}>
                     <View style={[tailwind`flex-row items-center`]}>
                         <Text style={[
                             tailwind` px-2 font-semibold`,
-                            { color }
+                            { color, fontFamily: 'Lato-Bold' }
                         ]}>See all</Text>
                         <AntDesign name="caretdown" size={12} color={color} />
                     </View>
@@ -46,15 +46,15 @@ const QuizChellange = () => {
                     ]}>
                     <Text style={[
                         tailwind`font-semibold text-[17px] mt-2 pb-4`,
-                        { color: appColor.lightTextColor }
+                        { color: appColor.lightTextColor, fontFamily: 'Lato-Bold' }
                     ]}>In Progress Quiz</Text>
                     <Text style={[
                         tailwind`text-[14px] pb-2`,
-                        { color: appColor.lightTextColor }
+                        { color: appColor.lightTextColor, fontFamily: 'Lato-Regular' }
                     ]}>Explore this week quiz challenge</Text>
                     <Text style={[
                         tailwind`font-semibold text-[12px] absolute bottom-2 right-2`,
-                        { color: textColor}
+                        { color: appColor.primaryColor, fontFamily: 'Lato-Bold' }
                     ]}>2/7</Text>
                 </View>
                 <View style={[
@@ -63,15 +63,15 @@ const QuizChellange = () => {
                     ]}>
                     <Text style={[
                         tailwind`font-semibold text-[18px] mt-2 pb-4`,
-                        { color: appColor.lightTextColor }
+                        { color: appColor.lightTextColor, fontFamily: 'Lato-Bold' }
                     ]}>Available Quiz</Text>
                     <Text style={[
                         tailwind`text-[14px] pb-2`,
-                        { color: appColor.lightTextColor }
+                        { color: appColor.lightTextColor, fontFamily: 'Lato-Regular' }
                     ]}>Explore this month quiz challenge</Text>
                     <Text style={[
                         tailwind`font-semibold text-[12px] absolute bottom-2 right-2`,
-                        { color: textColor }
+                        { color: appColor.primaryColor, fontFamily: 'Lato-Bold' }
                     ]}>10/30</Text>
                 </View>
             </View>

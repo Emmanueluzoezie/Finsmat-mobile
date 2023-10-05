@@ -1,21 +1,23 @@
 export const dailyTreat = [
     {
         treat: "Junk",
-        image: require("../assets/junkfood.png")
+        image: require("../assets/junk.png")
     },
     {
-        treat: "Marijuana(weed)",
+        treat: "Weed",
         image: require("../assets/weed.png")
     },
     {
         treat: "Alcohol",
-        image: require("../assets/alcohol.png")
+        image: require("../assets/acohol.png")
     },
     {
         treat: "Cigarette",
-        image: require("../assets/cigrate.png")
+        image: require("../assets/cigar.png")
     },
 ]
+
+
 
 export const currencies = [
     { name: "NGN", symbol: "₦", country: "Nigeria" },
@@ -31,6 +33,7 @@ export const currencies = [
     { name: "TND", symbol: "DT", country: "Tunisia" },
     { name: "DZD", symbol: "د.ج", country: "Algeria" },
 ];
+
 
 
 export const gifImage = [

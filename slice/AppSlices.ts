@@ -9,15 +9,17 @@ interface AppState {
     currentScreen: string;
     openOtpScreen: boolean;
     currentArticleScreen: string
+    errorMessage: string;
 }
 
 const initialState: AppState = {
     isUserLogin: true,
-    newUser: true,
-    appTheme: "dark",
+    newUser: false,
+    appTheme: "light",
     currentScreen: "home",
     openOtpScreen: false,
-    currentArticleScreen: "latest_article"
+    currentArticleScreen: "latest_article",
+    errorMessage: ""
 }
 
 export const appSlice = createSlice({
@@ -42,10 +44,13 @@ export const appSlice = createSlice({
         setCurrentArticleScreen: (state, action: PayloadAction<string>) => {
             state.currentArticleScreen = action.payload;
         },
+        setErrorMessage: (state, action: PayloadAction<string>) => {
+            state.errorMessage = action.payload;
+        },
     }
 });
 
-export const { setIsUserLogin, setNewUser, setAppTheme, setCurrentScreen, setOpenOtpScreen, setCurrentArticleScreen } = appSlice.actions;
+export const { setIsUserLogin, setNewUser, setAppTheme, setCurrentScreen, setOpenOtpScreen, setCurrentArticleScreen, setErrorMessage } = appSlice.actions;
 
 export const selectIsUserLogin = (state: RootState) => state.app.isUserLogin;
 export const selectNewUser = (state: RootState) => state.app.newUser;
@@ -53,6 +58,7 @@ export const selectAppTheme = (state: RootState) => state.app.appTheme;
 export const selectCurrentScreen = (state: RootState) => state.app.currentScreen;
 export const selectOpenOtpScreen = (state: RootState) => state.app.openOtpScreen;
 export const selectCurrentArticleScreen = (state: RootState) => state.app.currentArticleScreen;
+export const selectErrorMessage = (state: RootState) => state.app.errorMessage;
 
 export default appSlice.reducer;
 

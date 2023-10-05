@@ -14,7 +14,7 @@ const HeaderWithTwoItems = ({ Icon, name, onPress, title, size }) => {
         <View style={[tailwind`flex-row items-center flex-1`,]}>
             <Icon name={name} color={color} onPress={onPress} size={size} />
             <View style={[tailwind`flex-1 justify-center items-center text-lg `]}>
-                <Text style={[tailwind`text-[20px] pr-6 text-[${color}] capitalize font-bold`]}>{title}</Text>
+                <Text style={[tailwind`text-[19px] pr-6 text-[${color}] capitalize font-bold`, { fontFamily: 'Lato-Bold' }]}>{title}</Text>
             </View>
         </View>
     )

@@ -49,14 +49,13 @@ const WelcomeResult = () => {
     <View style={tailwind`flex-1 relative`}>
         <View style={tailwind`flex-row flex-col mt-10 justify-center items-center`}>
             <View style={[
-                  tailwind`p-2 px-6 mb-4 font-bold rounded-lg flex-row items-center`,
-                  { backgroundColor: buttonColor }
+                  tailwind`p-2 px-2 mb-4 font-bold rounded-lg flex-row items-center`,
             ]}>
-                <Ionicons name="checkmark-circle" size={20} color={bgColor} />
+                {/* <Ionicons name="checkmark-circle" size={20} color={bgColor} /> */}
                   <Text style={[
-                      tailwind`text-[15px] pl-5 font-bold`,
-                      { color: bgColor, }
-                  ]}>You have been rewarded 20 Coins</Text>
+                      tailwind`text-[15px]`,
+                      { color: color, }
+                  ]}>Congratulations, you have been rewarded <Text style={[tailwind`font-bold`,{color: buttonColor}]}>20 Points</Text></Text>
             </View>
             <Image
                 source={{ uri: randomGif }}
@@ -66,18 +65,18 @@ const WelcomeResult = () => {
                   <View style={[tailwind`p-5 rounded-md`, { backgroundColor: containerColor }]}>
                       <Text style={[
                           tailwind`text-[15px] text-center`,
-                          { color: textColor, fontWeight: "500" }
-                      ]}>Imagine that if you saved just half of the {getCurrencyInfo.symbol}{welcomeAmount} you spend on {userTreatItem} every day, you could have built up a substantial savings. In one year, you will get</Text>
-                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: textColor }
-                      ]}>{getCurrencyInfo.symbol}{oneYearReturn}</Text>
-                      <Text style={[tailwind`text-[15px] text-center`,{ color: textColor }
+                          { color: color, fontWeight: "500" }
+                      ]}>Imagine that if you saved just half of the {getCurrencyInfo.symbol}{Number(welcomeAmount) / 2} you spend on {userTreatItem} every day, you could have built up a substantial savings. In one year, you will get</Text>
+                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: color }
+                      ]}>{getCurrencyInfo.symbol}{" "}{oneYearReturn}</Text>
+                      <Text style={[tailwind`text-[15px] text-center`,{ color: color }
                       ]}>In five year, you will get</Text>
-                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: textColor }
-                      ]}>{getCurrencyInfo.symbol}{fiveYearReturn}</Text>
+                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: color }
+                      ]}>{getCurrencyInfo.symbol}{" "}{fiveYearReturn}</Text>
                       <Text style={tailwind`font-semibold`}></Text>
                       <Text style={[
                           tailwind`text-[16px] font-bold text-center mt-5`,
-                          {color: textColor}
+                          {color: color}
                       ]}>#{hashword}</Text>
                   </View>
               </View>
@@ -91,7 +90,7 @@ const WelcomeResult = () => {
                 <Text style={[
                     tailwind` text-center font-bold text-[18px] px-[100px]`,
                     { color: bgColor }
-                ]}>Get your coin</Text>
+                ]}>Get your point</Text>
             </TouchableOpacity>
             </View>
         </View>

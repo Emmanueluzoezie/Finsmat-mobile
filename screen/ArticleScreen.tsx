@@ -35,7 +35,7 @@ const ArticleScreen = () => {
     <View style={[tailwind`flex-1 pt-8`, { backgroundColor: bgColor }]}>
         <View style={tailwind`pr-3 flex-row py-2 items-center`}>
               <MaterialIcons name="chevron-left" onPress={() => navigation.goBack()}  title="Results"  size={30} color={color} />
-            <Text style={[tailwind`text-center flex-1 text-[17px] font-semibold`, {color}]}>Articles</Text>
+        <Text style={[tailwind`text-center flex-1 text-[17px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Articles</Text>
         </View>
         <View style={tailwind`pl-2`}>
               <ListOfArticleComponent />

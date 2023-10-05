@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native'
 import Web3Auth, { OPENLOGIN_NETWORK } from "@web3auth/react-native-sdk";
 import * as WebBrowser from "expo-web-browser";
@@ -10,8 +10,28 @@ import {  selectIsUserLogin, selectNewUser } from '../slice/AppSlices';
 import WelcomeQuestionsComponent from '../component/WelcomeQuestionsComponent';
 import tailwind from 'twrnc';
 import { selectKey, setKey, setUserInfo, setWeb3Auth } from '../slice/userSlice';
+import { useFonts } from 'expo-font';
+import * as Splash from "expo-splash-screen"
+// import * as Font from 'expo-font';
+
 
 const clientId = process.env.WEB3AUTH_CLIENT_ID
+
+// Function to load custom fonts
+// const loadFonts = async () => {
+//   await Font.loadAsync({
+//     'Lato-Regular': require('../assets/Lato/Lato-Regular.ttf'),
+//     'Lato-Bold': require('../assets/Lato/Lato-Regular.ttf'), // Load Lato-Bold font
+//     // Load other Lato font styles if needed
+//   });
+// };
+
+// loadFonts();
+
+// const customFonts = {
+//   'Lato-Regular': require('../assets/Lato/Lato-Regular.ttf'),
+//   'Lato-Bold': require('../assets/Lato/Lato-Regular.ttf')
+// }
 
 const IsUserAvailable = () => {
   const isUserAvailable = useSelector(selectIsUserLogin)
@@ -19,10 +39,9 @@ const IsUserAvailable = () => {
   const dispatch = useDispatch()
   const isNewUser = useSelector(selectNewUser)
 
-
   useEffect(() => {
     const init = async () => {
-      try { 
+      try {
         const auth = new Web3Auth(WebBrowser, SecureStore, {
           clientId,
           network: OPENLOGIN_NETWORK.TESTNET,
@@ -40,8 +59,20 @@ const IsUserAvailable = () => {
     init();
   }, []);
 
+  // useEffect(() => {
+  //   async function prepare(){
+  //     Splash.preventAutoHideAsync()
+  //   }
+  //   prepare()
+  // }, [])
+
+
+  // else {
+  //   Splash.hideAsync()
+  // }
+
   return(
-    <View style={tailwind`flex-1`}>
+    <View style={tailwind`flex-1 justify-center`}>
       {isNewUser?
         <WelcomeQuestionsComponent />
         :

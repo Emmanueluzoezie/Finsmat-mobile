@@ -29,7 +29,7 @@ const ListOfArticleComponent = () => {
               { backgroundColor: screenBgColor } : { borderWidth: 1, borderColor: textColor }]}
           onPress={() => handleSelectScreen("saved")}>
               <FontAwesome name="bookmark" size={12} color={articleScreen === "saved"?  screenColor: textColor } />
-              <Text style={[tailwind`text-[12px] pl-[4px] font-bold`,
+              <Text style={[tailwind`text-[12px] pl-[4px] font-bold`, { fontFamily: 'Lato-Bold' },
                   articleScreen === "saved" ? { color: screenColor}:{ color: textColor }
                 ]}>Saved</Text>
           </TouchableOpacity>
@@ -37,19 +37,19 @@ const ListOfArticleComponent = () => {
           
           <TouchableOpacity style={[tailwind` py-1 mx-1 px-2 rounded-md`, articleScreen === "latest_article" ? { backgroundColor: screenBgColor } : { borderWidth: 1, borderColor: textColor }]}
               onPress={() => handleSelectScreen("latest_article")}>
-              <Text style={[tailwind`text-[12px] capitalize font-semibold`, articleScreen === "latest_article" ? { color: screenColor } : { color: textColor }
+              <Text style={[tailwind`text-[12px] capitalize font-semibold`, { fontFamily: 'Lato-Bold' }, articleScreen === "latest_article" ? { color: screenColor } : { color: textColor }
               ]}>latest article</Text>
           </TouchableOpacity>
 
 
           <TouchableOpacity style={[tailwind` py-1 mx-1 px-2 rounded-md`, articleScreen === "traditional_article" ? { backgroundColor: screenBgColor } : { borderWidth: 1, borderColor: textColor }]}
               onPress={() => handleSelectScreen("traditional_article")}>
-              <Text style={[tailwind`text-[12px] pl-[4px] capitalize font-bold`, articleScreen === "traditional_article" ? { color: screenColor } : { color: textColor }]}>traditional finance article</Text>
+              <Text style={[tailwind`text-[12px] pl-[4px] capitalize font-bold`, { fontFamily: 'Lato-Bold' }, articleScreen === "traditional_article" ? { color: screenColor } : { color: textColor }]}>traditional finance article</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[tailwind` py-1 mx-1 px-2 rounded-md`, articleScreen === "crypto_article" ? { backgroundColor: screenBgColor } : { borderWidth: 1, borderColor: textColor }]}
               onPress={() => handleSelectScreen("crypto_article")}>
-              <Text style={[tailwind`text-[12px] pl-[4px] capitalize font-bold`, articleScreen === "crypto_article" ? { color: screenColor } : { color: textColor }]}>Crypto finance article</Text>
+              <Text style={[tailwind`text-[12px] pl-[4px] capitalize font-bold`, { fontFamily: 'Lato-Bold' }, articleScreen === "crypto_article" ? { color: screenColor } : { color: textColor }]}>Crypto finance article</Text>
           </TouchableOpacity>
       </ScrollView>
   )

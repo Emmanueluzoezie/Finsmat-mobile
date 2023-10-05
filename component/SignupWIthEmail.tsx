@@ -1,10 +1,10 @@
-import { StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
-import React from 'react'
+import { ActivityIndicator, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native'
+import React, { useState } from 'react'
 import tailwind from 'twrnc'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAppTheme, } from '../slice/AppSlices'
+import { selectAppTheme, setErrorMessage, } from '../slice/AppSlices'
 import { appColor } from './AppColor'
 import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import { solanaAddress } from '../utilies/solana'
@@ -30,6 +30,7 @@ const scheme = 'calbuild';
 const resolvedRedirectUrl = `${scheme}://web3auth`
 
 const SignupWIthEmail = () => {
+    const [loading, setLoading] = useState(false)
     const appTheme = useSelector(selectAppTheme)
     const web3auth = useSelector(selectWeb3Auth)
     const dispatch = useDispatch()
@@ -48,8 +49,13 @@ const SignupWIthEmail = () => {
     const placeholderColor = appTheme === "dark" ? appColor.secondaryDarkBackground : appColor.lightSecondaryBackground
 
     const loginWithEmailPasswordless = async (value) => {
-        console.log(web3auth)
-        console.log( value.email)
+        dispatch(setErrorMessage(""))
+        setLoading(true)
+
+        setTimeout(() => {
+            dispatch(setErrorMessage("Oops, something went wrong while signing in. Please check your internet connection and try again or use Google or facebook or twitter to login"))
+            setLoading(false)
+        }, 10000)
         // try {
         //     await web3auth.login({
         //         loginProvider: LOGIN_PROVIDER.EMAIL_PASSWORDLESS,
@@ -109,7 +115,8 @@ const SignupWIthEmail = () => {
                                     tailwind`flex-row justify-center items-center p-3 rounded-md `,
                                     { backgroundColor: buttonBgColor }
                                 ]}>
-                                      <Text style={[tailwind`font-bold text-[17px] pr-2`,
+                                      {loading && <ActivityIndicator size="small" color={buttonTextColor} />}
+                                      <Text style={[tailwind`font-bold text-[17px] px-2`,
                                         { color: buttonTextColor, letterSpacing: 0.6 }
                                     ]}>Sign up with email</Text>
                                     
@@ -121,7 +128,7 @@ const SignupWIthEmail = () => {
                                     tailwind`flex-row justify-center items-center p-3 rounded-md`,
                                       { backgroundColor: containerColor }
                                 ]}>
-                                    <Text style={[tailwind`font-semibold pr-2`,
+                                    <Text style={[tailwind`font-semibold px-2`,
                                         { color: placeholderColor, letterSpacing: 0.6 }
                                     ]}>Sign up with email</Text>
                                     

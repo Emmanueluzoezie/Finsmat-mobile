@@ -96,16 +96,16 @@ export default function CalculatorComponent() {
         }]}>
             <ScrollView style={tailwind`flex-1 px-4`}>
                 <Text style={[tailwind`text-4xl text-right my-1`,
-                { color }
+                { color, fontFamily: 'Lato-Bold' }
                 ]}>{previousNum}</Text>
                 <Text style={[tailwind`text-4xl text-right my-1`,
-                { color }
+                { color, fontFamily: 'Lato-Bold' }
                 ]}>{operation}</Text>
                 <Text style={[tailwind`text-4xl text-right my-1`,
-                { color }
+                { color, fontFamily: 'Lato-Bold' }
                 ]}>{currentNum}</Text>
                 <Text style={[tailwind`text-4xl text-right my-1`,
-                { color }
+                { color, fontFamily: 'Lato-Bold' }
                 ]}>{result}</Text>
             </ScrollView>
             <View style={tailwind`flex-row justify-center flex-wrap`}>
@@ -114,7 +114,7 @@ export default function CalculatorComponent() {
                 }]} onPress={() => clear()}>
                     <Text style={[
                         tailwind`text-3xl font-bold`,
-                        {color}
+                        { color, fontFamily: 'Lato-Bold' }
                     ]}>C</Text>
                 </TouchableOpacity>
                 {['7', '8', '9', '4', '5', '6', '1', '2', '3', '0'].map((num) => (
@@ -123,7 +123,7 @@ export default function CalculatorComponent() {
                     }]} onPress={() => appendNumber(num)}>
                         <Text style={[
                             tailwind`text-3xl font-bold`,
-                            {color}
+                            { color, fontFamily: 'Lato-Bold' }
                         ]}>{num}</Text>
                     </TouchableOpacity>
                 ))}
@@ -133,7 +133,7 @@ export default function CalculatorComponent() {
                     }]} onPress={() => chooseOperation(op)}>
                         <Text style={[
                             tailwind`text-3xl font-bold`,
-                            {color}
+                            { color, fontFamily: 'Lato-Bold' }
                         ]}>{op}</Text>
                     </TouchableOpacity>
                 ))}
@@ -142,7 +142,7 @@ export default function CalculatorComponent() {
                 }]} onPress={() => calculate()}>
                     <Text style={[
                         tailwind`text-3xl font-bold`,
-                        {color}
+                        { color, fontFamily: 'Lato-Bold' }
                     ]}>=</Text>
                 </TouchableOpacity>
             </View>

@@ -24,8 +24,8 @@ const ResultComponent = ({question, correctAnswer}) => {
         <View style={tailwind`p-3`}>
             <View style={[tailwind`p-3 rounded-md`,
             { backgroundColor: containerColor }]}>
-                <Text style={[tailwind`text-[15px] font-semibold`, { color }]}>{question}</Text>
-                <Text style={[tailwind`text-[13px] pt-2`, { color }]}>{correctAnswer}</Text>
+                <Text style={[tailwind`text-[15px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>{question}</Text>
+                <Text style={[tailwind`text-[13px] pt-2`, { color, fontFamily: 'Lato-Bold' }]}>{correctAnswer}</Text>
             </View>
         </View>
     </ScrollView>

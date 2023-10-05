@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import tailwind from 'twrnc'
 import * as Clipboard from 'expo-clipboard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectAppTheme } from '../slice/AppSlices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,18 +10,22 @@ import { appColor } from './AppColor';
 import { useNavigation } from '@react-navigation/native';
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_ALL_USER, GET_USER_BY_EMAIL } from '../graphql/queries';
-import { ADD_USER } from '../graphql/mutations';
-import { selectUserInfo } from '../slice/userSlice';
+import { ADD_USER, ADD_USER_HISTORY } from '../graphql/mutations';
+import { selectUserId, selectUserInfo, setUserId } from '../slice/userSlice';
 
 const DashBoardHeader = () => {
   const [solanaAddress, setSolanaAddress] = useState("")
+  const [historyAdded, setHistoryAdded] = useState(false);
   const [copyMessage, setCopyMessage] = useState("")
   const appTheme = useSelector(selectAppTheme)
   const navigation = useNavigation()
   const getUserInfo = useSelector(selectUserInfo)
+  const dispatch = useDispatch()
+
   const [addUserToDatabase] = useMutation(ADD_USER, {
     refetchQueries: [GET_ALL_USER, "getUserList"]
   })
+  const [addHistoryToDatabase] = useMutation(ADD_USER_HISTORY)
 
   const { data, loading, error } = useQuery(GET_ALL_USER)
   const { data: userData, loading: userLoading, error: userError } = useQuery(GET_USER_BY_EMAIL, {
@@ -62,33 +66,76 @@ const DashBoardHeader = () => {
               email: getUserInfo.email,
               user_sol_address: solanaAddress,
               user_secret: secretKey,
-              badge: "finance novice",
+              badge: "Novice",
               full_name: getUserInfo.name,
               image: getUserInfo.profileImage,
               created_at: new Date(),
               coins: 20,
+              token: 0,
+              isAdminUser: false
             },
           })
         }
       }
-      console.log("added")
     } catch (error) {
       console.log("error:", error);
     }
   };
 
+  const markHistoryAddedFlag = async () => {
+    try {
+      await AsyncStorage.setItem('historyAdded', 'true');
+    } catch (error) {
+      console.error('Error setting historyAdded flag:', error);
+    }
+  };
+
+  const AddHistory = async () => {
+    try {
+      if (!historyAdded && userInfo) {
+        const result = await addHistoryToDatabase({
+          variables: {
+            title: "Daily treat point",
+            user_id: userInfo?.id,
+            amount: userInfo?.coins,
+            created_at: new Date(),
+            descriptions: `You have been rewarded ${userInfo?.coins} for telling us your daily treat.`
+          },
+        });
+        if (result.data) {
+          markHistoryAddedFlag();
+        }
+      }
+    } catch (err) {
+    }
+  };
+
+  const checkHistoryAddedFlag = async () => {
+    try {
+      const historyFlag = await AsyncStorage.getItem('historyAdded');
+      if (historyFlag !== 'true') {
+        AddHistory()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   const buttonColor = appTheme === "dark" ? appColor.primaryDarkColor : appColor.primaryColor
 
   const color = appTheme === "dark" ? appColor.darkTextColor : appColor.lightTextColor
 
   const textColor = appTheme === "dark"? appColor.secondaryDarkTextColor : appColor.secondaryLightTextColor
+  
+  const userInfo = userData?.getUserByEmail[0]
 
   useEffect(() => {
     AddNewUser();
-  }, []) 
-  
-  const userInfo = userData?.getUserByEmail[0]
+    checkHistoryAddedFlag()
+    if (userData) {
+      dispatch(setUserId(userInfo?.id));
+    }
+  }, [])
 
     const copyToClipboard = async () => {
       await Clipboard.setStringAsync(userInfo.user_sol_address);
@@ -101,19 +148,21 @@ const DashBoardHeader = () => {
   return (
     <View style={tailwind`pt-12 relative`}>
       <View style={tailwind` flex-row items-center px-3`}>
-        <TouchableOpacity style={tailwind` flex-1 flex-row items-center`} onPress={() => navigation.navigate("profile")}>
+        <TouchableOpacity style={tailwind` flex-1 flex-row items-center`} 
+          onPress={() =>  navigation.navigate("profile")
+        }>
           <View style={[tailwind` rounded-full`, {backgroundColor: appColor.primaryDarkColor}]}>
             <Image source={{ uri: userInfo?.image }} style={tailwind`w-[32px] h-[32px] rounded-full`} />
           </View>
           <View style={tailwind`pl-2`}>
             <Text style={[
               tailwind`text-[14px] pb-1 font-bold`, 
-              {color, }]}
+              { color, fontFamily: 'Lato-Bold' }]}
               numberOfLines={1}
               ellipsizeMode='tail'>{userInfo?.full_name}</Text>
             <View style={tailwind`flex-row w-[105px] `}>
               <Text style={[tailwind`text-[12px]`,
-                { color: textColor }]}
+                { color: textColor, fontFamily: 'Lato-Regular' }]} 
                 numberOfLines={1}
                 ellipsizeMode='tail'
               >{userInfo?.user_sol_address}</Text>
@@ -126,14 +175,14 @@ const DashBoardHeader = () => {
             <Image source={require("../assets/investor.png")} style={tailwind`w-[15px] h-[15px]`}/>
            <Text style={[
             tailwind`pl-1 text-[12px] font-semibold capitalize`,
-            {color}
+              { color, fontFamily: 'Lato-Bold' }
            ]}>{userInfo?.badge}</Text>
           </View>
           <View style={tailwind`items-center pl-2`}>
             <Image source={require("../assets/coins.png")} style={tailwind`w-[15px] h-[12px]`} />
             <Text style={[
               tailwind`pl-1 text-[12px] font-bold`,
-              {color}
+              { color, fontFamily: 'Lato-Bold' }
             ]}>{userInfo?.coins}</Text>
           </View>
         </View>

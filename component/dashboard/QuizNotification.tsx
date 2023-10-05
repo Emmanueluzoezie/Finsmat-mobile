@@ -21,11 +21,11 @@ const QuizNotification = ({bgColor, onPress, borderColor, title, paragraph, noti
       <View style={tailwind`flex-1`}>
             <Text style={[
                 tailwind`text-[16px] font-semibold`,
-                {color: color}
+          { color: color, fontFamily: 'Lato-Bold' }
              ]}>{title}</Text>
             <Text style={[
                 tailwind`mt-3 text-[14px] pr-4`,
-          { color: textColor }
+          { color: textColor, fontFamily: 'Lato-Regular' }
               ]}>{paragraph}</Text>
       </View>
         <TouchableOpacity style={[tailwind`w-[20px] justify-center items-center rounded-sm h-[20px] relative`]}>

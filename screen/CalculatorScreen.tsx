@@ -68,6 +68,7 @@ const CalculatorScreen = () => {
                             {
                                 color: currentScreen === "investment" ? primaryColor : color,
                                 fontWeight: currentScreen === "investment" ? "bold" : "500",
+                                fontFamily: "Lato-Bold"
                             }
                         ]}>Investment</Text>
                     </TouchableOpacity>
@@ -87,6 +88,7 @@ const CalculatorScreen = () => {
                             {
                                 color: currentScreen === "compound" ? primaryColor : color,
                                 fontWeight: currentScreen === "compound" ? "bold" : "500",
+                                fontFamily: "Lato-Bold" 
                             }
                         ]}>Compound</Text>
                     </TouchableOpacity>

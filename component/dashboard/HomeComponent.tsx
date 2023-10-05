@@ -21,24 +21,6 @@ const HomeComponent = () => {
       <View style={[tailwind`flex-1 px-3 py-4`]}>
         <QuizReminder />
         <QuizChellange />
-        {/* <View style={[tailwind`flex-row p-[10px] border-l-2 font-semibold my-6 rounded-lg`, { backgroundColor: containerColor, borderColor:appColor.primaryColor}]}>
-          <View style={[{ backgroundColor: containerColor, }
-          ]}>
-            <Image source={require("../../assets/bulbimage.png")} style={[tailwind`w-12 h-18`]} />
-          </View>
-          <View style={[tailwind`flex-1 justify-between`]}>
-            <Text style={[
-              tailwind` px-2`,
-              { color }
-            ]}>Calculate by input your saving goal, time frame, and initial investment.</Text>
-            <TouchableOpacity>
-              <Text style={[
-                tailwind` pl-10 font-semibold`,
-                { color: appTheme === "dark" ? appColor.primaryDarkColor : appColor.primaryColor }
-              ]}>See how money grows</Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
         <LeaderBoardRank />
       </View>
     </ScrollView>

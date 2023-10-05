@@ -20,6 +20,8 @@ import CompoundQuizScreen from '../screen/quiz/CompoundQuizScreen'
 import FriendsQuizScreen from '../screen/quiz/FriendsQuizScreen'
 import InvestmentQuizScreen from '../screen/quiz/InvestmentQuizScreen'
 import ArticleScreen from '../screen/ArticleScreen'
+import ConvertPointToTokenScreen from '../screen/ConvertPointToTokenScreen'
+import AddQuestionScreen from '../screen/AddQuestionScreen'
 
 const Stack = createNativeStackNavigator()
 const AuthenticatedUser = () => {
@@ -50,6 +52,10 @@ const AuthenticatedUser = () => {
             <Stack.Screen name="compound_quiz" component={CompoundQuizScreen} options={{ headerShown: false }} />
             <Stack.Screen name="investment_quiz" component={InvestmentQuizScreen} options={{ headerShown: false }} />
             <Stack.Screen name="friends_quiz" component={FriendsQuizScreen} options={{ headerShown: false }} />
+
+            {/* Other Screens */}
+          <Stack.Screen name="convert_token" component={ConvertPointToTokenScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="add_question" component={AddQuestionScreen} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
      {/* } */}

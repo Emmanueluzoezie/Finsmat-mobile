@@ -91,7 +91,7 @@ const InvestmentCalculator = () => {
             <View style={[tailwind``]}>
                 <Text style={[
                     tailwind`text-center text-[15px]`,
-                    { color }
+                    { color, fontFamily: 'Lato-Regular' }
                 ]}>Use this calculator to estimate the future value of an investment.</Text>
                 {result &&
                     <View style={[
@@ -100,7 +100,7 @@ const InvestmentCalculator = () => {
                     ]}>
                         <Text style={[
                             tailwind` text-center font-bold text-[15px]`,
-                            { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor }
+                            { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }
                         ]}>The future value of your investment will be ${result}</Text>
                     </View>
                 }
@@ -115,7 +115,7 @@ const InvestmentCalculator = () => {
                             <View style={[tailwind`text-center font-semibold mt-6 text-[16px]`]}>
                                 <Text style={[
                                     tailwind`pl-2 font-semibold`,
-                                    { color }
+                                    { color, fontFamily: "Lato-Bold" }
                                 ]}>Investment Amount</Text>
                                 <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                 { borderColor, backgroundColor: inputBgColor }
@@ -128,12 +128,12 @@ const InvestmentCalculator = () => {
                                     onChangeText={props.handleChange("amount")}
                                     autoFocus={true}
                                 />
-                                <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.amount}</Text>
+                                <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.amount}</Text>
                             </View>
                             <View style={tailwind`mt-4`}>
                                 <Text style={[
                                     tailwind`pl-2 font-semibold`,
-                                    { color }
+                                    { color, fontFamily: 'Lato-Bold' }
                                 ]}>Investment Years</Text>
                                 <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                 { borderColor, backgroundColor: inputBgColor }
@@ -145,17 +145,17 @@ const InvestmentCalculator = () => {
                                     value={props.values.timeInYears}
                                     onChangeText={props.handleChange("timeInYears")}
                                 />
-                                <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.timeInYears}</Text>
+                                <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.timeInYears}</Text>
                             </View>
                             <View style={tailwind`mt-4`}>
                                 <Text style={[
                                     tailwind`pl-2 pb-1 font-semibold`,
-                                    { color }
+                                    { color, fontFamily: 'Lato-Bold' }
                                 ]}>Deposit Schedule</Text>
                                 <TouchableOpacity onPress={() => setOpenSchedule(!openSchedule)}>
                                     <View style={[tailwind`p-3 rounded-md mt-1 flex-row justify-between`, { backgroundColor: inputBgColor }]}>
                                         <View style={tailwind`flex-row`}>
-                                            <Text style={[tailwind`font-semibold pr-4 capitalize`, { color }]}>{depositSchedule}</Text>
+                                            <Text style={[tailwind`font-semibold pr-4 capitalize`, { color, fontFamily: 'Lato-Bold' }]}>{depositSchedule}</Text>
                                         </View>
                                         <AntDesign name="caretdown" size={14} color={color} />
                                     </View>
@@ -183,7 +183,7 @@ const InvestmentCalculator = () => {
                                     onPress={() =>props.handleSubmit()}>
                                         <Text style={[
                                             tailwind` text-center font-bold text-[18px]`,
-                                            { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor }
+                                            { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }
                                         ]}>Calculate</Text>
                                     </TouchableOpacity>
                                    :
@@ -193,7 +193,7 @@ const InvestmentCalculator = () => {
                                     }]}>
                                         <Text style={[
                                             tailwind` text-center font-bold text-[18px]`,
-                                            { color: bgColor }
+                                            { color: bgColor, fontFamily: 'Lato-Bold' }
                                         ]}>Calculate</Text>
                                     </TouchableOpacity>
                                 }
@@ -206,7 +206,7 @@ const InvestmentCalculator = () => {
                                     }}>
                                     <Text style={[
                                         tailwind` text-center font-bold text-[18px]`,
-                                        { color: buttonColor }
+                                        { color: buttonColor, fontFamily: 'Lato-Bold' }
                                     ]}>Reset</Text>
                                 </TouchableOpacity>
                             </View>

@@ -27,7 +27,7 @@ const BottomNavigationContainer = () => {
     },[])
 
     return (
-        <View style={[tailwind` pt-2 pb-8 flex-row justify-between items-center`,
+        <View style={[tailwind` pt-2 pb-6 flex-row justify-between items-center`,
         { backgroundColor: bgColor }
         ]}>
             <View style={[tailwind`w-[75px]`]}>

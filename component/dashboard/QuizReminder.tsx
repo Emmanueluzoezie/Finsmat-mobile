@@ -16,16 +16,16 @@ const QuizReminder = () => {
     ]}>
       <Text style={[
         tailwind`text-[18px] font-semibold`,
-        {color: appColor.lightTextColor }
+        {color: appColor.lightTextColor, fontFamily: 'Lato-Bold' }
       ]}>Daily Quiz</Text>
       <View style={[tailwind`flex-row items-center`]}>
           <Text style={[tailwind`flex-1 pr-2`,
-        {color: appColor.lightTextColor}]}>Take your daily quiz, and win an extra prize to add to your rank</Text>
+          { color: appColor.lightTextColor, fontFamily: 'Lato-Regular'}]}>Take your daily quiz, and win an extra prize to add to your rank</Text>
         <Image source={require("../../assets/quizss.png")} style={[tailwind`w-10 h-16`]} />
       </View>
       <Text style={[
               tailwind`text-[13px] font-semibold`,
-        { color: appColor.primaryColor }
+        { color: appColor.primaryColor, fontFamily: 'Lato-Bold' }
       ]}>12hrs Left</Text>
     </View>
   )

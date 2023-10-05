@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Image, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAppTheme} from '../slice/AppSlices'
+import { selectAppTheme, selectErrorMessage, setErrorMessage} from '../slice/AppSlices'
 import { LOGIN_PROVIDER } from "@web3auth/react-native-sdk";
 import tailwind from 'twrnc'
 import { appColor } from '../component/AppColor'
@@ -18,7 +18,7 @@ const scheme = 'calbuild';
 const resolvedRedirectUrl = `${scheme}://web3auth`
 
 const UnauthenticatedUser = () => {
-  const [errorMessage, setErrorMessage] = useState("")
+  const errorMessage = useSelector(selectErrorMessage)
   const appTheme = useSelector(selectAppTheme)
   const web3auth = useSelector(selectWeb3Auth)
   const dispatch = useDispatch()
@@ -31,6 +31,7 @@ const UnauthenticatedUser = () => {
   const containerColor = appTheme === "dark" ? appColor.inputDarkBgColor : appColor.inputLightBgColor
 
   const login = async (provider) => {
+    dispatch(setErrorMessage(""))
     try {
       dispatch(setConsole("Logging in"))
       await web3auth.login({
@@ -57,7 +58,7 @@ const UnauthenticatedUser = () => {
         }
       }
     } catch (e) {
-      setErrorMessage("Oops, something went wrong while signing in. Please check your internet connection and try again")
+      dispatch(setErrorMessage("Oops, something went wrong while signing in. Please check your internet connection and try again"))
     }
   };
 
@@ -71,15 +72,18 @@ const UnauthenticatedUser = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={[{ zIndex: 1, flex: 1, paddingBottom: 10 }]}
           >
+          <View style={tailwind`items-center mt-20`}>
+            <Image source={require("../assets/budgetlog.png")} style={[tailwind` w-[100px] h-[100px]`]} />
+          </View>
            {errorMessage &&
-            <View style={tailwind`absolute top-[150px] w-full px-4`}>
+            <View style={tailwind`absolute top-[190px] w-full px-4`}>
               <View style={[tailwind`px-4 py-2 rounded-md`, { backgroundColor: appColor.errorColor }]}>
                 <Text style={[tailwind`font-bold`, { color: "white" }]}>{errorMessage}</Text>
               </View>
             </View>
            }
             <View style={[tailwind`flex-1 justify-center`]}>
-              <View style={[tailwind`px-4`]}>
+              <View style={[tailwind`px-4 mt-[-50px]`]}>
                 <View style={[tailwind`py-3`]}>
                   <TouchableOpacity onPress={() => login(LOGIN_PROVIDER.GOOGLE)}>
                       <View style={[

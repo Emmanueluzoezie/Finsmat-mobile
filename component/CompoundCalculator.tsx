@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import { selectAppTheme } from '../slice/AppSlices'
 import { appColor } from './AppColor'
 import tailwind from 'twrnc'
-import { AntDesign } from '@expo/vector-icons'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 
@@ -61,10 +60,10 @@ const CompoundCalculator = () => {
 
     return (
         <TouchableOpacity style={[tailwind`py-4 flex-1`]} activeOpacity={1} onPress={handleRemoveKeyboard}>
-            <View style={[tailwind`flex-1`]}>
+            <View style={[tailwind`flex-1 px-2`]}>
                 <Text style={[
                     tailwind`text-center text-[15px]`,
-                    { color }
+                    { color, fontFamily: 'Lato-Regular' }
                 ]}>Welcome to the Compound Interest Calculator. This tool helps you find out how much money you'll have in the future if you invest</Text>
 
                 {result &&
@@ -74,7 +73,7 @@ const CompoundCalculator = () => {
                     ]}>
                         <Text style={[
                             tailwind` text-center font-bold text-[15px]`,
-                            { color: appTheme === "dark"? appColor.lightTextColor: appColor.darkTextColor }
+                            { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }
                         ]}>The future value of your investment will be ${result}</Text>
                     </View>
                 }
@@ -89,11 +88,11 @@ const CompoundCalculator = () => {
                             calculateCompoundInterest(values)
                         }}>
                         {props => (
-                            <ScrollView style={[tailwind`px-4`]}>
+                            <ScrollView style={[tailwind`px-2`]}>
                                 <View style={[tailwind`text-center font-semibold mt-6 text-[16px]`]}>
                                     <Text style={[
                                         tailwind`pl-2 font-semibold`,
-                                        { color }
+                                        { color, fontFamily: 'Lato-Bold' }
                                     ]}>Investment Amount</Text>
                                     <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                     { borderColor, backgroundColor: inputBgColor }
@@ -105,12 +104,12 @@ const CompoundCalculator = () => {
                                         onBlur={props.handleBlur("amount")}
                                         onChangeText={props.handleChange("amount")}
                                     />
-                                    <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.amount}</Text>
+                                    <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.amount}</Text>
                                 </View>
                                 <View style={tailwind`mt-4`}>
                                     <Text style={[
                                         tailwind`pl-2 font-semibold`,
-                                        { color }
+                                        { color, fontFamily: 'Lato-Bold' }
                                     ]}>Annual Interest Rate</Text>
                                     <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                     { borderColor, backgroundColor: inputBgColor }
@@ -122,12 +121,12 @@ const CompoundCalculator = () => {
                                         value={props.values.rate}
                                         onChangeText={props.handleChange("rate")}
                                     />
-                                    <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.rate}</Text>
+                                    <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.rate}</Text>
                                 </View>
                                 <View style={tailwind`mt-4`}>
                                     <Text style={[
                                         tailwind`pl-2 font-semibold`,
-                                        { color }
+                                        { color, fontFamily: 'Lato-Bold' }
                                     ]}>Compounding Periods per Year</Text>
                                     <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                     { borderColor, backgroundColor: inputBgColor }
@@ -139,12 +138,12 @@ const CompoundCalculator = () => {
                                         value={props.values.compoundPerYear}
                                         onChangeText={props.handleChange("compoundPerYear")}
                                     />
-                                    <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.compoundPerYear}</Text>
+                                    <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.compoundPerYear}</Text>
                                 </View>
                                 <View style={tailwind`mt-4`}>
                                     <Text style={[
                                         tailwind`pl-2 font-semibold`,
-                                        { color }
+                                        { color, fontFamily: 'Lato-Bold' }
                                     ]}>Number of Years</Text>
                                     <TextInput style={[tailwind`mt-1 text-[15px] p-3 rounded-md`,
                                     { borderColor, backgroundColor: inputBgColor }
@@ -156,7 +155,7 @@ const CompoundCalculator = () => {
                                         value={props.values.timeInYears}
                                         onChangeText={props.handleChange("timeInYears")}
                                     />
-                                    <Text style={tailwind`pl-6 text-[#e33010] text-[10px]`}>{props.errors.timeInYears}</Text>
+                                    <Text style={[tailwind`pl-6 text-[#e33010] text-[10px]`, { fontFamily: 'Lato-Bold' }]}>{props.errors.timeInYears}</Text>
                                 </View>
                                 
                                 <View style={tailwind`mt-6`}>
@@ -168,7 +167,7 @@ const CompoundCalculator = () => {
                                             onPress={() => props.handleSubmit()}>
                                             <Text style={[
                                                 tailwind` text-center font-bold text-[15px]`,
-                                                { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor }
+                                                { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }
                                             ]}>Calculate</Text>
                                         </TouchableOpacity>
                                         :
@@ -178,7 +177,7 @@ const CompoundCalculator = () => {
                                         }]}>
                                             <Text style={[
                                                 tailwind` text-center font-bold text-[18px]`,
-                                                { color: bgColor }
+                                                { color: bgColor, fontFamily: 'Lato-Bold' }
                                             ]}>Calculate</Text>
                                         </TouchableOpacity>
                                     }
@@ -188,7 +187,7 @@ const CompoundCalculator = () => {
                                     }]} onPress={() => props.resetForm()}>
                                         <Text style={[
                                             tailwind` text-center font-semibold text-[16px]`,
-                                            { color: buttonColor }
+                                            { color: buttonColor, fontFamily: 'Lato-Bold' }
                                         ]}>Reset</Text>
                                     </TouchableOpacity>
                                 </View>

@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectAppTheme } from '../../slice/AppSlices'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { appColor } from '../../component/AppColor'
 import tailwind from 'twrnc'
 import HeaderWithTwoItems from '../../component/HeaderWithTwoItems'
@@ -10,6 +10,10 @@ import { MaterialIcons } from '@expo/vector-icons'
 import SingleQuizComponent from '../../component/quiz/SingleQuizComponent'
 import ResultComponent from '../../component/ResultComponent'
 import { resetAnsweredQuestions, selectAnswerQuestions } from '../../slice/QuizSlice'
+import { useQuery } from '@apollo/client'
+import { GET_ALL_QUESTION_BY_TYPE } from '../../graphql/queries'
+import ResultParentComponent from '../../component/ResultParentComponent'
+import QuizLoadingComponent from '../../component/quiz/QuizLoadingComponent'
 
 const CompoundQuizScreen = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -17,13 +21,17 @@ const CompoundQuizScreen = () => {
   const [showInstruction, setShowInstruction] = useState(true)
   const [startQuiz, setStartQuiz] = useState(false)
   const [remainingTime, setRemainingTime] = useState(300);
-  const getUserResult = useSelector(selectAnswerQuestions)
   const appTheme = useSelector(selectAppTheme)
   const navigation = useNavigation()
-  const dispatch = useDispatch()
+  const [percentage, setPercentage] = useState(0)
+  const [currentQuestion, setCurrentQuestion] = useState<any>()
+  const route = useRoute().name
 
-  const correctAnswersCount = getUserResult.filter(question => question.isCorrect).length;
-  const coinsToAward = correctAnswersCount * 10;
+  const { data, loading, error } = useQuery(GET_ALL_QUESTION_BY_TYPE, {
+    variables: {
+      question_type: "Budget"
+    }
+  })
 
   const bgColor = appTheme === "dark" ? appColor.darkBackground : appColor.lightBackground
 
@@ -33,31 +41,13 @@ const CompoundQuizScreen = () => {
 
   const color = appTheme === "dark" ? appColor.darkTextColor : appColor.lightTextColor
 
-  const questions = [
-    {
-      question: 'What is the capital of France?',
-      answerOne: 'Berlin',
-      answerTwo: 'Paris',
-      answerThree: 'Madrid',
-      correctAnswer: 'Paris',
-      id: 1
-    },
-    {
-      question: 'What is 2 + 2?',
-      answerOne: '3',
-      answerTwo: '4',
-      answerThree: '5',
-      correctAnswer: '4',
-      id: 2
-    },
-  ];
+  const questions = data?.getQuestionsByType?.slice(0, 5)
 
   const handleStartQuiz = () => {
     setStartQuiz(true)
     setRemainingTime(120);
     setShowResultComponent(false);
 
-    // Start the countdown interval
     const interval = setInterval(() => {
       setRemainingTime((prevTime) => {
         if (prevTime <= 1) {
@@ -70,10 +60,6 @@ const CompoundQuizScreen = () => {
     }, 1000);
   };
 
-  const handleBack = async () => {
-    dispatch(resetAnsweredQuestions())
-    navigation.goBack()
-  }
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -86,25 +72,16 @@ const CompoundQuizScreen = () => {
     }
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const totalQuestions = questions.length;
-  const eachQuestionPercent = 100 / totalQuestions;
-  const percentage = (currentQuestionIndex + 1) * eachQuestionPercent;
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setRemainingTime(prevTime => {
-  //       if (prevTime <= 1) {
-  //         clearInterval(interval);
-  //         setShowResultComponent(true);
-  //         return 0;
-  //       }
-  //       return prevTime - 1;
-  //     });
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
+  useEffect(() => {
+    if (questions && currentQuestionIndex !== undefined && currentQuestionIndex >= 0 && currentQuestionIndex < questions.length) {
+      const currentQuestion = questions[currentQuestionIndex];
+      const totalQuestions = questions.length;
+      const eachQuestionPercent = 100 / totalQuestions;
+      const percentage = (currentQuestionIndex + 1) * eachQuestionPercent;
+      setCurrentQuestion(currentQuestion)
+      setPercentage(percentage);
+    }
+  }, [currentQuestionIndex, data])
 
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
@@ -114,96 +91,76 @@ const CompoundQuizScreen = () => {
       tailwind`flex-1`,
       { backgroundColor: bgColor }
     ]}>
-      {showResultComponent ?
-        <View style={[tailwind`flex-1`]}>
-          <View style={[tailwind`flex-row items-center pt-10 pb-3 px-3 pr-10`, { backgroundColor: containerColor }]}>
-            <HeaderWithTwoItems
-              Icon={MaterialIcons}
-              name="chevron-left"
-              onPress={handleBack}
-              title="Results"
-              size={30}
-            />
-          </View>
-          <View style={[tailwind`px-3 pt-6`]}>
-            <Text style={[tailwind`text-center text-[16px] font-semibold`, { color }]}>You have been awarded won {coinsToAward} coins for answering {correctAnswersCount} questions correctly</Text>
-          </View>
-          <Text style={[tailwind`text-center text-[18px] mt-5 font-semibold`, { color }]}>
-            Here are the answers
-          </Text>
-          <FlatList
-            data={questions}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => (
-              < ResultComponent question={item.question} correctAnswer={item.correctAnswer} />
-            )}
-          />
-          <View style={tailwind`absolute bottom-20 px-4 w-full`}>
-            <TouchableOpacity style={[
-              tailwind`py-2 rounded-md`,
-              { backgroundColor: buttonColor }
-            ]} onPress={handleBack}>
-              <Text style={[
-                tailwind`font-bold text-[16px] text-center`,
-                { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor }
-              ]}>Go to quiz session</Text>
+      {loading ?
+        <QuizLoadingComponent />
+        :
+        error ?
+          <View style={[tailwind`flex-1 justify-center items-center`,]}>
+            <Text style={[tailwind`text-[16px]`, { color, fontFamily: "Lato-Bold" }]}>Oops! An error occur in our end. Check your internet connection and try again</Text>
+            <TouchableOpacity style={[tailwind`justify-center items-center px-4 mt-6 py-2 rounded-md`, { backgroundColor: buttonColor }]} onPress={() => navigation.goBack()}>
+              <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }]}>Click to reload</Text>
             </TouchableOpacity>
           </View>
-        </View>
         :
         <View style={tailwind`flex-1`}>
-          <View style={[tailwind`flex-row items-center pt-10 pb-3 px-3 pr-10`, { backgroundColor: containerColor }]}>
-            <HeaderWithTwoItems
-              Icon={MaterialIcons}
-              name="chevron-left"
-              onPress={() => navigation.goBack()}
-              title="Compound quiz"
-              size={30}
-            />
-          </View>
-
-          {!startQuiz ?
-            <View style={tailwind`flex-1`}>
-              <Text style={[tailwind`pt-4 px-3 text-[16px] text-center`, { color }]}>You have 2 mins to answer five Questions, and your time start immediately you click on the start quiz button. please read the question and your selected answer carefully. Once you click Next button, you will not be able to return to the previous question. and make sure you click on the next button after answering the question before the time runs out</Text>
-              <View style={[tailwind`px-10 mt-10`]}>
-                <TouchableOpacity style={[tailwind`justify-center items-center py-2 rounded-md`, { backgroundColor: buttonColor }]} onPress={handleStartQuiz}>
-                  <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor }]}>Start Quiz</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+          {showResultComponent ?
+            <ResultParentComponent questions={questions} questionType={route}/>
             :
             <View style={tailwind`flex-1`}>
-              <View style={tailwind`p-4`}>
-                <View style={[
-                  tailwind`h-3 w-full rounded-full`,
-                  { backgroundColor: containerColor }
-                ]}>
-                  <View
-                    style={[
-                      tailwind`rounded-full h-3`,
-                      { width: `${percentage}%`, backgroundColor: buttonColor },
-                    ]}
-                  />
-                </View>
-                <Text style={[tailwind`text-center mt-2 font-bold`, { color }]}> Question {currentQuestionIndex + 1} out {questions.length} questions</Text>
+              <View style={[tailwind`flex-row items-center pt-10 pb-3 px-3 pr-10`, { backgroundColor: containerColor }]}>
+                <HeaderWithTwoItems
+                  Icon={MaterialIcons}
+                  name="chevron-left"
+                  onPress={() => navigation.goBack()}
+                  title="Compound quiz"
+                  size={30}
+                />
               </View>
-              <View style={[tailwind`absolute right-4 top-[60px]`]}>
-                <Text style={[tailwind` font-bold`, { color: buttonColor }]}>Time Remaining</Text>
-                <View style={tailwind`items-center`}>
-                  <View style={[tailwind`w-[50px] h-[50px] rounded-full justify-center items-center  border-[6px]`, { borderColor: buttonColor }]}>
-                    <Text style={[tailwind` font-extrabold`, { color: buttonColor }]}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
+
+              {!startQuiz ?
+                <View style={tailwind`flex-1 justify-center`}>
+                  <Text style={[tailwind`pt-4 px-3 text-[16px] text-center mt-[-100px]`, { color, fontFamily: 'Lato-Regular' }]}>You have 2 mins to answer five Questions, and your time start immediately you click on the start quiz button. please read the question and your selected answer carefully. Once you click Next button, you will not be able to return to the previous question. and make sure you click on the next button after answering the question before the time runs out</Text>
+                  <View style={[tailwind`px-10 mt-10`]}>
+                    <TouchableOpacity style={[tailwind`justify-center items-center py-2 rounded-md`, { backgroundColor: buttonColor }]} onPress={handleStartQuiz}>
+                      <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }]}>Start Quiz</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-              </View>
-              <SingleQuizComponent
-                answerOne={currentQuestion.answerOne}
-                answerTwo={currentQuestion.answerTwo}
-                answerThree={currentQuestion.answerThree}
-                question={currentQuestion.question}
-                correctAnswer={currentQuestion.correctAnswer}
-                handleNext={handleNext}
-                id={currentQuestion.id}
-              />
+                :
+                <View style={tailwind`flex-1`}>
+                  <View style={tailwind`p-4`}>
+                    <View style={[
+                      tailwind`h-3 w-full rounded-full`,
+                      { backgroundColor: containerColor }
+                    ]}>
+                      <View
+                        style={[
+                          tailwind`rounded-full h-3`,
+                          { width: `${percentage}%`, backgroundColor: buttonColor },
+                        ]}
+                      />
+                    </View>
+                    <Text style={[tailwind`text-center mt-2 font-bold`, { color, fontFamily: 'Lato-Bold' }]}> Question {currentQuestionIndex + 1} out {questions?.length} questions</Text>
+                  </View>
+                  <View style={[tailwind`absolute right-4 top-[60px]`]}>
+                    <Text style={[tailwind` font-bold`, { color: buttonColor, fontFamily: 'Lato-Bold' }]}>Time Remaining</Text>
+                    <View style={tailwind`items-center`}>
+                      <View style={[tailwind`w-[50px] h-[50px] rounded-full justify-center items-center  border-[6px]`, { borderColor: buttonColor }]}>
+                        <Text style={[tailwind` font-extrabold`, { color: buttonColor, fontFamily: 'Lato-Bold' }]}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <SingleQuizComponent
+                    answerOne={currentQuestion?.answer_a}
+                    answerTwo={currentQuestion?.answer_b}
+                    answerThree={currentQuestion?.answer_c}
+                    question={currentQuestion?.question}
+                    correctAnswer={currentQuestion?.correct_answer}
+                    handleNext={handleNext}
+                    id={currentQuestion?.id}
+                  />
+                </View>
+              }
             </View>
           }
         </View>
