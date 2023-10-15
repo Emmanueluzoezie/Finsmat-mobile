@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectAppTheme, setAppTheme } from '../slice/AppSlices'
 import { appColor } from './AppColor'
 import { useNavigation } from '@react-navigation/native'
-import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
+import { Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { solanaAddress } from '../utilies/solana'
 import { useQuery } from '@apollo/client'
 import { selectUserInfo } from '../slice/userSlice'
@@ -95,6 +95,29 @@ const SettingComponent = () => {
                 :
                 <MaterialCommunityIcons name="shield-moon" size={24} color={color} />
               }
+            </TouchableOpacity>
+            <TouchableOpacity style={[
+              tailwind`px-3 py-4 my-1 mt-2 flex-row items-center`,
+              { backgroundColor: containerColor, borderColor: bgColor }
+            ]}
+              onPress={() => navigation.navigate("referal")}>
+              <View style={tailwind`flex-1`}>
+                <Text style={[tailwind`text-[16px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Referral</Text>
+                <Text style={[tailwind`text-[13px] pt-1`, { color, fontFamily: 'Lato-Bold' }]}>Get your referral link</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={30} color={color} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[
+              tailwind`px-3 py-4 my-1 mt-2 flex-row items-center`,
+              { backgroundColor: containerColor, borderColor: bgColor }
+            ]}
+              onPress={() => navigation.navigate("friends_list")}>
+              <FontAwesome5 name="user-friends" size={16} color={color} />
+              <View style={tailwind`flex-1 pl-2`}>
+                <Text style={[tailwind`text-[16px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Friend List</Text>
+                <Text style={[tailwind`text-[13px] pt-1`, { color, fontFamily: 'Lato-Bold' }]}>Find friends and pick who to challenge.</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={30} color={color} />
             </TouchableOpacity>
          </View>
         }

@@ -32,26 +32,43 @@ const LeaderBoardRank = () => {
 
     const color = appTheme === "dark" ? appColor.darkTextColor : appColor.lightTextColor
 
-    const TopFiveLeader = userInfo?.sort((a, b) => b.coins - a.coins).slice(0, 5)
+    const sortedUserInfo = userInfo?.slice().sort((a, b) => b.coins - a.coins);
+    const topThreeLeaders = sortedUserInfo?.slice(0, 3);
 
     useEffect(() => {
-        const sortedUsers = userInfo.sort((a, b) => b.coins - a.coins);
+        if (data) {
+            // Create a copy of the userInfo array
+            const sortedUsers = [...userInfo].sort((a, b) => b.coins - a.coins);
 
-        const currentUserIndex = sortedUsers.findIndex((user) => user.full_name === getUserInfo.name);
+            const currentUserIndex = sortedUsers.findIndex((user) => user.full_name === getUserInfo.name);
 
-        if (currentUserIndex !== -1) {
-            const currentUser = sortedUsers[currentUserIndex];
-            setUserDetails(currentUser)
-            dispatch(setUserRank(currentUserIndex + 1))
-        } else {
-            return
+            if (currentUserIndex !== -1) {
+                const currentUser = sortedUsers[currentUserIndex];
+                setUserDetails(currentUser);
+                dispatch(setUserRank(currentUserIndex + 1));
+            }
         }
-    }, [])
+    }, []);
 
   return (
-    <View>
+    <View style={tailwind`mt-2`}>
+        <View style={[tailwind`flex-row justify-between items-center p-2`]}>
+            <Text style={[
+                tailwind`font-semibold text-[16px]`,
+                { color, fontFamily: 'Lato-Bold' }
+            ]}>Top 5 LeaderBoard</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("leaderboard")} >
+                <View style={[tailwind`flex-row items-center`]}>
+                    <Text style={[
+                        tailwind` px-2 font-semibold`,
+                        { color, fontFamily: 'Lato-Bold' }
+                    ]}>See all</Text>
+                    <AntDesign name="caretdown" size={12} color={color} />
+                </View>
+            </TouchableOpacity>
+        </View>
         {loading?
-            <LoadingAppComponent />
+            <View style={[tailwind`w-full h-[70px] rounded-md`, {backgroundColor: containerColor}]} />
             :
             error?
                 <View style={[tailwind`flex-1 justify-center items-center`,]}>
@@ -61,57 +78,27 @@ const LeaderBoardRank = () => {
                     </TouchableOpacity>
                 </View>
                 :
-            <View style={[tailwind`mt-4`]}>
-                <View style={[tailwind`flex-row justify-between items-center p-2`]}>
-                    <Text style={[
-                        tailwind`font-semibold text-[16px]`,
-                        { color, fontFamily: 'Lato-Bold' }
-                    ]}>Top 5 LeaderBoard</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("leaderboard")} >
-                        <View style={[tailwind`flex-row items-center`]}>
-                            <Text style={[
-                                tailwind` px-2 font-semibold`,
-                                { color, fontFamily: 'Lato-Bold' }
-                            ]}>See all</Text>
-                            <AntDesign name="caretdown" size={12} color={color} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={[tailwind`p-2 rounded-md my-2`, {backgroundColor: appColor.primaryDarkColor}]}>
-                    <Text style={[tailwind`pl-4 font-semibold`, { fontFamily: 'Lato-Bold' }]}>Your rank</Text>
-                    <View style={tailwind`flex-row items-center px-2`}>
-                        <Text style={{color: appColor.lightTextColor, fontFamily: 'Lato-Bold'}}>{userRank}</Text>
-                        <Image source={{ uri: userDetails?.image }} style={[tailwind`w-10 h-10 mx-3 rounded-full`]} />
-                        <View style={tailwind`flex-1`}>
-                            <Text style={[tailwind`font-semibold pb-1 text-[16px]`, { color: appColor.lightTextColor, fontFamily: 'Lato-Bold' }]}>{userDetails?.full_name}</Text>
-                            <Text style={[tailwind`text-[13px]`, { color: "black", fontFamily: 'Lato-Regular' }]}>Over all Quiz</Text>
-                        </View>
-                        <TouchableOpacity style={[tailwind`w-[18px] justify-center items-center rounded-sm h-[18px] bg-white`]}>
-                            <AntDesign name="caretdown" size={12} color={primary} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                
+            <View>
                 <FlatList
-                    data={TopFiveLeader}
+                    data={topThreeLeaders}
                     keyExtractor={(user) => user.id.toString()}
-                    renderItem={({ item, index }) => {
-                        if (item.name === userDetails.name) {
-                            return null;
-                        }
-                        return(<View style={[tailwind`p-2 rounded-md my-2 ${item.name === userDetails.name && "hidden"}`, { backgroundColor: containerColor }]}>
-                            <View style={tailwind`flex-row items-center px-2`}>
+                    renderItem={({ item, index }) =>  (<View style={[tailwind`p-2 rounded-md my-2}`, { backgroundColor: item.email === userDetails?.email? appColor.primaryDarkColor : containerColor }]}>
+                            {item.email === userDetails?.email && <Text style={[tailwind`pl-4 font-semibold`, { fontFamily: 'Lato-Bold' }]}>Your rank</Text>}
+                            <View style={tailwind`flex-row items-center`}>
                                 <Text style={{ color, fontFamily: 'Lato-Bold' }}>{index + 1}</Text>
-                                <Image source={{ uri: item.image }} style={[tailwind`w-10 h-10 mx-3 rounded-full`]} />
+                                <Image source={{ uri: item.image }} style={[tailwind`w-10 h-10 mx-2 rounded-full`]} />
                                 <View style={tailwind`flex-1`}>
                                     <Text style={[tailwind`font-semibold pb-1 text-[16px]`, { color, fontFamily: 'Lato-Bold' }]}>{item.full_name}</Text>
                                 </View>
-                                <TouchableOpacity style={[tailwind`w-[18px] justify-center items-center rounded-sm h-[18px] bg-white`]}>
-                                    <AntDesign name="caretdown" size={12} color={primary} />
-                                </TouchableOpacity>
+                                <View style={[tailwind`flex-row items-center`]}>
+                                    <Text style={[tailwind`font-semibold pb-1 pr-2 text-[14px]`, { color, fontFamily: 'Lato-Bold' }]}>{item.coins} points</Text>
+                                    <TouchableOpacity style={[tailwind`w-[18px] justify-center items-center rounded-sm h-[18px] bg-white`]}>
+                                        <AntDesign name="caretdown" size={12} color={primary} />
+                                    </TouchableOpacity>
+                                    </View>
                             </View>
                         </View>)
-                    }}
+                    }
                 />
             </View>
         }

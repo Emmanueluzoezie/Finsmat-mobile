@@ -4,12 +4,16 @@ export const dailyTreat = [
         image: require("../assets/junk.png")
     },
     {
-        treat: "Weed",
-        image: require("../assets/weed.png")
+        treat: "Gambling",
+        image: require("../assets/betting.jpeg")
     },
     {
         treat: "Alcohol",
         image: require("../assets/acohol.png")
+    },
+    {
+        treat: "Weed",
+        image: require("../assets/weed.png")
     },
     {
         treat: "Cigarette",
@@ -51,6 +55,12 @@ export const hashTagWord = [
     "DeyPlay",
     "BeWise",
     "UseYaHead",
+]
+
+export const TimeSpent = [
+    "Daily",
+    "Weekly",
+    "Monthly"
 ]
 
 const today = new Date();

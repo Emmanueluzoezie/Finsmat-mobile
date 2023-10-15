@@ -30,17 +30,12 @@ export const users = [
     { id: 10, name: 'Musa Abubakar', coins: 300, image:"https://png.pngtree.com/png-vector/20190710/ourmid/pngtree-user-vector-avatar-png-image_1541962.jpg" }
 ];
 
-export const questionsType = [
-    "Budget",
-    "Saving",
-    "Compound",
-    "Friends",
-    "Investment",
-    "Daily"
-]
-
 export const questionsLevelType = [
     "Beginner",
     "Intermediate",
     "Advanced",
+]
+
+export const questions = [
+    {}
 ]

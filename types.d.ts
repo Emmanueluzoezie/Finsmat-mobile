@@ -12,3 +12,8 @@ type Question = {
     question_level: string
     question_type: string
 }
+
+type SelectFriendType = {
+    friend_id: string
+    friend_name: string
+}

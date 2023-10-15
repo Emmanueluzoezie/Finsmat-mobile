@@ -1,7 +1,7 @@
 import { FlatList, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import tailwind from 'twrnc'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectAppTheme } from '../slice/AppSlices'
 import { useNavigation } from '@react-navigation/native'
 import { appColor } from './AppColor'
@@ -9,6 +9,8 @@ import { Formik } from 'formik'
 import * as yup from 'yup'
 import { MaterialIcons } from '@expo/vector-icons'
 import { questionsLevelType, questionsType } from '../utilies/AppObjects'
+import { selectQuestion, setQuestion } from '../slice/QuizSlice'
+import AddFriendsQuestion from './AddFriendsQuestion'
 
 const questionValidation = yup.object().shape({
   question: yup
@@ -30,11 +32,12 @@ const questionValidation = yup.object().shape({
 
 const AddQuestionComponent = () => {
   const [showQuestionType, setShowQuestionType] = useState(false)
-  const [question, setQuestion] = useState("Saving")
+  const question = useSelector(selectQuestion)
   const [showQuestionLevel, setShowQuestionLevel] = useState(false)
   const [questionLevel, setQuestionLevel] = useState("Beginner")
   const appTheme = useSelector(selectAppTheme)
   const navigation = useNavigation()
+  const dispatch = useDispatch()
 
   // questionsType
 
@@ -54,7 +57,7 @@ const AddQuestionComponent = () => {
 
 
   const handleQuestion = (item) => {
-    setQuestion(item)
+    dispatch(setQuestion(item))
     setShowQuestionType(false)
   }
 
@@ -87,6 +90,9 @@ const AddQuestionComponent = () => {
             tailwind`text-[16px] text-center`,
             { color, fontFamily: "Lato-Bold" }]}>please ensure that among the three input one must be correct, and it must match the designated correct answer.</Text>
         </View>
+        {question === "Friends"? 
+        <AddFriendsQuestion />
+        :
         <Formik
           initialValues={{ question: "", answer_one: "", answer_two: "", answer_three: "", correct_answer: "" }}
           validationSchema={questionValidation}
@@ -178,23 +184,24 @@ const AddQuestionComponent = () => {
                     />
                     <Text style={[tailwind`text-red-500 pl-4 text-[12px]`, { fontFamily: "Lato-Bold" }]}>{props.errors.answer_two}</Text>
                   </View>
-                  <View style={tailwind``}>
-                    <Text style={[
-                      tailwind`text-[15px] font-semibold`,
-                      { color, fontFamily: "Lato-Bold" }
-                    ]}>Third answer</Text>
-                    <TextInput
-                      style={[tailwind`mt-1 text-[14px] px-3 py-[11px] rounded-md`,
-                      { borderColor, backgroundColor: inputBgColor, fontFamily: "Lato-Regular" }
-                      ]}
-                      placeholder=""
-                      onChangeText={props.handleChange("answer_three")}
-                      onBlur={props.handleBlur("answer_three")}
-                      multiline
-                      value={props.values.answer_three}
-                    />
-                    <Text style={[tailwind`text-red-500 pl-4 text-[12px]`, { fontFamily: "Lato-Bold" }]}>{props.errors.answer_three}</Text>
-                  </View>
+                    <View style={tailwind``}>
+                      <Text style={[
+                        tailwind`text-[15px] font-semibold`,
+                        { color, fontFamily: "Lato-Bold" }
+                      ]}>Third answer</Text>
+                      <TextInput
+                        style={[
+                          tailwind`mt-1 text-[14px] px-3 py-[11px] rounded-md`,
+                          { borderColor, backgroundColor: inputBgColor, fontFamily: "Lato-Regular" }
+                        ]}
+                        placeholder=""
+                        onChangeText={props.handleChange("answer_three")}
+                        onBlur={props.handleBlur("answer_three")}
+                        multiline
+                        value={props.values.answer_three}
+                      />
+                      <Text style={[tailwind`text-red-500 pl-4 text-[12px]`, { fontFamily: "Lato-Bold" }]}>{props.errors.answer_three}</Text>
+                    </View>
                   <View style={tailwind``}>
                     <Text style={[
                       tailwind`text-[15px] font-semibold`,
@@ -269,6 +276,7 @@ const AddQuestionComponent = () => {
             </View>
           )}
         </Formik>
+        }
       </KeyboardAvoidingView>
     </TouchableOpacity>
   )

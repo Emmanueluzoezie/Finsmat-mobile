@@ -13,8 +13,8 @@ interface AppState {
 }
 
 const initialState: AppState = {
-    isUserLogin: true,
-    newUser: false,
+    isUserLogin: false,
+    newUser: true,
     appTheme: "light",
     currentScreen: "home",
     openOtpScreen: false,

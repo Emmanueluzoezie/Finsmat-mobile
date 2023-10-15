@@ -90,3 +90,44 @@ export const ADD_USER_HISTORY = gql`
     }
  }
 `
+
+export const ADD_QUIZ_WITH_FRIEND = gql`
+    mutation MyMutation(
+    $has_friend_played: Boolean
+    $friend_name: String
+    $created_at: DateTime
+    $user_name: String
+    ){
+        insertChellenge_quiz(
+            has_friend_played: $has_friend_played
+            friend_name: $friend_name
+            created_at: $created_at
+            user_name: $user_name
+        ){
+            id
+            has_friend_played
+            friend_name
+            created_at
+            user_name
+        }
+    }
+`
+
+
+export const UPDATE_QUIZ_WITH_FRIEND = gql`
+ mutation MyMutation(
+    $id: ID!
+    $has_friend_played: Boolean
+    ){
+        updateChellenge_quiz(
+            id: $id
+            has_friend_played: $has_friend_played
+            ){
+                id
+                has_friend_played
+                friend_name
+                created_at
+                user_name
+            }
+    }
+`

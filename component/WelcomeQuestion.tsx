@@ -4,13 +4,14 @@ import { Formik } from 'formik'
 import * as yup from 'yup'
 import tailwind from 'twrnc';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectedCurrencyInfo, selectNameOfItem, setCurrencyInfo, setNameOfItem, setShowResult, setWelcomeAmount } from '../slice/welcomeSlice';
+import { selectedCurrencyInfo, selectNameOfItem, selectTreatTime, setCurrencyInfo, setNameOfItem, setShowResult, setTreatTimes, setWelcomeAmount } from '../slice/welcomeSlice';
 import { selectAppTheme } from '../slice/AppSlices';
 import { appColor } from './AppColor';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { currencies, dailyTreat } from '../utilies/WelcomeArrayItems';
+import { currencies, dailyTreat, TimeSpent } from '../utilies/WelcomeArrayItems';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import Animated, { Easing, useSharedValue, withSpring } from 'react-native-reanimated';
+import { treatItems } from '../utilies/AppObjects';
 
 
 const formValidation = yup.object().shape({
@@ -24,8 +25,10 @@ const formValidation = yup.object().shape({
 const WelcomeQuestion = () => {
     const [showTreat, setShowTreat] = useState(false)
     const [showCurrencies, setShowCurrencies] = useState(false)
+    const [showTimes, setShowTimes] = useState(false)
     const appTheme = useSelector(selectAppTheme);
     const getSelectedCurrency = useSelector(selectedCurrencyInfo)
+    const getTimeTreat = useSelector(selectTreatTime)
     const getTreat = useSelector(selectNameOfItem)
     const dispatch = useDispatch()
 
@@ -43,6 +46,11 @@ const WelcomeQuestion = () => {
         setShowTreat(false)
     };
 
+    const handleChangeTreatTime = (treat) => {
+        dispatch(setTreatTimes(treat));
+        setShowTimes(false)
+    };
+
     const handleFormSubmit = (values) => {
         dispatch(setWelcomeAmount(values.amount))
         dispatch(setShowResult(true))
@@ -56,6 +64,9 @@ const WelcomeQuestion = () => {
 
     const toggleCurrencies = () => {
         setShowCurrencies(!showCurrencies);
+    };
+    const toggleTreatTime = () => {
+        setShowTimes(!showTimes);
     };
 
     const bgColor = appTheme === "dark" ? appColor.darkBackground : appColor.lightBackground
@@ -148,9 +159,16 @@ const WelcomeQuestion = () => {
                                                 <AntDesign name="caretdown" size={14} color={color} />
                                             </View>
                                         </TouchableWithoutFeedback>
-                                        
                                     </View>
                                 </View>
+                                <TouchableWithoutFeedback onPress={toggleTreatTime}>
+                                    <View style={[tailwind`p-3 rounded-md mt-8 mx-2 flex-row justify-between`, { backgroundColor: inputBgColor }]}>
+                                        <View style={tailwind`flex-row`}>
+                                            <Text style={[tailwind`font-semibold pr-2`, { color, fontFamily: "Lato-Bold" }]}>{getTimeTreat}</Text>
+                                        </View>
+                                        <AntDesign name="caretdown" size={14} color={color} />
+                                    </View>
+                                </TouchableWithoutFeedback>
 
                             {showCurrencies &&
                                 <View style={[tailwind`absolute rounded-t-2xl bottom-[-350px] pt-1 pb-4 w-full`,{
@@ -174,6 +192,28 @@ const WelcomeQuestion = () => {
                                             >
                                                 <Text style={[tailwind`text-[15px] font-semibold`, { color: textColor, fontFamily: "Lato-Bold"}]}>{item.country}</Text>
                                                 <Text style={[tailwind`pl-4 text-[15px] font-semibold`, { color: textColor, fontFamily: "Lato-Bold" }]}>({item.name})</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
+                                </View>
+                            }
+                            {showTimes &&
+                                <View style={[tailwind`absolute rounded-t-2xl bottom-[-150px] pt-1 pb-10 w-full`,{
+                                        zIndex: 10,
+                                        backgroundColor: appColor.primarySecondColor, },
+                                    ]}>
+                                    <FlatList
+                                        data={TimeSpent}
+                                        keyExtractor={item => item}
+                                        renderItem={({ item, index }) => (
+                                            <TouchableOpacity
+                                                style={[
+                                                    tailwind`flex-row justify-center items-center p-3`,
+                                                    {borderColor: appColor.primaryColor, borderTopWidth: index === 0 ? 0 : 1, borderBottomWidth: index === currencies.length - 1 ? 0 : 1,},
+                                                ]}
+                                                onPress={() => handleChangeTreatTime(item)}
+                                            >
+                                                <Text style={[tailwind`text-[15px] font-semibold`, { color: textColor, fontFamily: "Lato-Bold"}]}>{item}</Text>
                                             </TouchableOpacity>
                                         )}
                                     />

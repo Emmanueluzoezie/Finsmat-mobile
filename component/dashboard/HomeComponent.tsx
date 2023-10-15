@@ -17,13 +17,11 @@ const HomeComponent = () => {
   const containerColor = appTheme === "dark" ? appColor.darkContainerBackground : appColor.lightContainerBackground
 
   return (
-    <ScrollView>
       <View style={[tailwind`flex-1 px-3 py-4`]}>
         <QuizReminder />
         <QuizChellange />
         <LeaderBoardRank />
       </View>
-    </ScrollView>
   )
 }
 

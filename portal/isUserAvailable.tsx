@@ -47,6 +47,7 @@ const IsUserAvailable = () => {
           network: OPENLOGIN_NETWORK.TESTNET,
         });
         dispatch(setWeb3Auth(auth));
+        console.log(auth)
         await auth.init();
         if (auth?.privKey) {
           dispatch(setUserInfo(auth.userInfo()));
@@ -77,15 +78,15 @@ const IsUserAvailable = () => {
         <WelcomeQuestionsComponent />
         :
         <View style={styles.container}>
-            {getKey ?
+        { getKey?
               (
                 <AuthenticatedUser />
               )
               :
               (
                 <UnauthenticatedUser />
-              )
-            }
+                )
+              }
         </View>
         }
     </View>

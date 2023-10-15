@@ -1,11 +1,37 @@
+type Chellenge_quiz {
+  created_at: DateTime!
+  friend_name: String
+  has_friend_played: Boolean
+  id: ID!
+  user_name: String
+}
+
+type Friends_question {
+  answer_a: String
+  answer_b: String
+  correct_answer: String
+  created_at: DateTime!
+  id: ID!
+  question: String
+  user: User @materializer(query: "getUserUsingFriends_question_user_id_fkey")
+  user_id: ID
+}
+
 type History {
   amount: Float
-  created_at: DateTime
+  created_at: DateTime!
   descriptions: String
   id: ID!
   title: String
   user: User @materializer(query: "getUserUsingHistory_user_id_fkey")
   user_id: ID
+}
+
+type Notifications {
+  created_at: DateTime!
+  id: ID!
+  message: String
+  user_email: String
 }
 
 type Questions {
@@ -18,7 +44,8 @@ type Questions {
   question: String
   question_level: String
   question_type: String
-  user_id:ID
+  user: User @materializer(query: "getUserUsingQuestions_user_id_fkey")
+  user_id: ID
 }
 
 type User {
@@ -26,15 +53,35 @@ type User {
   coins: Float
   created_at: DateTime!
   email: String
+  friends_question: [Friends_question]
+    @materializer(
+      query: "getFriends_questionUsingFriends_question_user_id_fkey"
+    )
   full_name: String
   history: [History] @materializer(query: "getHistoryUsingHistory_user_id_fkey")
   id: ID!
   image: String
+  isAdminUser: Boolean
+  questions: [Questions]
+    @materializer(query: "getQuestionsUsingQuestions_user_id_fkey")
+  rank: Float
   token: Float
+  user_friend: [User_friend]
+    @materializer(query: "getUser_friendUsingUser_friend_user_id_fkey")
   user_secret: String
   user_sol_address: String
   username: String
-  isAdminUser: Boolean
+}
+
+type User_friend {
+  created_at: DateTime!
+  friend_accepted: Boolean
+  friend_id: ID
+  friend_image: String
+  friend_name: String
+  id: ID!
+  user: User @materializer(query: "getUserUsingUser_friend_user_id_fkey")
+  user_id: ID
 }
 
 """
@@ -42,6 +89,74 @@ The following queries are just a set of examples of how to access your schema.
 Feel free to modify them or aggregate more.
 """
 type Query {
+  " Queries for type 'Chellenge_quiz' "
+  getChellenge_quiz(id: ID!): Chellenge_quiz
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Chellenge_quiz"
+      configuration: "postgresql_config"
+    )
+  getChellenge_quizList: [Chellenge_quiz]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Chellenge_quiz"
+      configuration: "postgresql_config"
+    )
+    getAllQuizByFriendName(user_name: String!): [Chellenge_quiz]
+      @dbquery(
+        type: "postgresql"
+        schema: "public"
+        query: """
+        select *, "Chellenge_quiz".id as id from "Chellenge_quiz" where "Chellenge_quiz"."friend_name" = $1
+        """
+        configuration: "postgresql_config"
+      )
+  getChellenge_quizPaginatedList(first: Int, after: Int): [Chellenge_quiz]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "friend_name", "has_friend_played", "id", "user_name" FROM "Chellenge_quiz" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'Friends_question' "
+  getFriends_question(id: ID!): Friends_question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "friends_question"
+      configuration: "postgresql_config"
+    )
+  getFriends_questionList: [Friends_question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "friends_question"
+      configuration: "postgresql_config"
+    )
+  getFriends_questionPaginatedList(first: Int, after: Int): [Friends_question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "answer_a", "answer_b", "correct_answer", "created_at", "id", "question", "user_id" FROM "friends_question" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getFriends_questionUsingFriends_question_user_id_fkey(
+    id: ID!
+  ): [Friends_question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "answer_a", "answer_b", "correct_answer", "created_at", "id", "question", "user_id" FROM "friends_question" WHERE "user_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
   " Queries for type 'History' "
   getHistory(id: ID!): History
     @dbquery(
@@ -57,22 +172,21 @@ type Query {
       table: "history"
       configuration: "postgresql_config"
     )
-  getHistoryByUser_Id(user_id: ID!): [History]
-    @dbquery(
-      type: "postgresql"
+    getHistoryByUser_Id(user_id: ID): [History]
+@dbquery(
+    type: "postgresql"
       schema: "public"
-      query: """
-      SELECT * FROM "history" WHERE "user_id" = $1
-      ORDER BY "created_at" DESC
+       query: """
+      select *, "history".id as id from "history" where "history"."user_id" = $1
       """
       configuration: "postgresql_config"
-    )
+)
   getHistoryPaginatedList(first: Int, after: Int): [History]
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "amount", "created_at", "id", "title", "user_id" FROM "history" ORDER BY "id" LIMIT $1 OFFSET $2
+      SELECT "amount", "created_at", "descriptions", "id", "title", "user_id" FROM "history" ORDER BY "id" LIMIT $1 OFFSET $2
       """
       configuration: "postgresql_config"
     )
@@ -81,7 +195,31 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "amount", "created_at", "id", "title", "user_id" FROM "history" WHERE "user_id" = $1
+      SELECT "amount", "created_at", "descriptions", "id", "title", "user_id" FROM "history" WHERE "user_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'Notifications' "
+  getNotifications(id: ID!): Notifications
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Notifications"
+      configuration: "postgresql_config"
+    )
+  getNotificationsList: [Notifications]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Notifications"
+      configuration: "postgresql_config"
+    )
+  getNotificationsPaginatedList(first: Int, after: Int): [Notifications]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "id", "message", "user_email" FROM "Notifications" ORDER BY "id" LIMIT $1 OFFSET $2
       """
       configuration: "postgresql_config"
     )
@@ -100,25 +238,33 @@ type Query {
       table: "Questions"
       configuration: "postgresql_config"
     )
-  getQuestionsByType(question_type: String): [Questions]
-    @dbquery(
-      type: "postgresql"
-      schema: "public"
-      query:"""
-        SELECT * from "Questions" where "question_type" = $1
-      """
-      configuration: "postgresql_config"
-    )
+    getQuestionsByType(question_type: String): [Questions]
+      @dbquery(
+        type: "postgresql"
+        schema: "public"
+        query: """
+          SELECT * from "Questions" where "question_type" = $1
+        """
+        configuration: "postgresql_config"
+      )
   getQuestionsPaginatedList(first: Int, after: Int): [Questions]
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "answer_a", "answer_b", "answer_c", "correct_answer", "created_at", "id", "question", "question_level", "question_type" FROM "Questions" ORDER BY "id" LIMIT $1 OFFSET $2
+      SELECT "answer_a", "answer_b", "answer_c", "correct_answer", "created_at", "id", "question", "question_level", "question_type", "user_id" FROM "Questions" ORDER BY "id" LIMIT $1 OFFSET $2
       """
       configuration: "postgresql_config"
     )
-
+  getQuestionsUsingQuestions_user_id_fkey(id: ID!): [Questions]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "answer_a", "answer_b", "answer_c", "correct_answer", "created_at", "id", "question", "question_level", "question_type", "user_id" FROM "Questions" WHERE "user_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
   " Queries for type 'User' "
   getUser(id: ID!): User
     @dbquery(
@@ -134,21 +280,30 @@ type Query {
       table: "User"
       configuration: "postgresql_config"
     )
-  getUserByEmail(email: String!): [User]
-    @dbquery(
-      type: "postgresql"
-      schema: "public"
-      query: """
-       select *, "User".id as id from "User" where "User"."email" = $1
-      """
-      configuration: "postgresql_config"
-    )
+    getUserByEmail(email: String!): [User]
+      @dbquery(
+        type: "postgresql"
+        schema: "public"
+        query: """
+        select *, "User".id as id from "User" where "User"."email" = $1
+        """
+        configuration: "postgresql_config"
+      )
   getUserPaginatedList(first: Int, after: Int): [User]
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "token", "user_secret", "user_sol_address", "username", "isAdminUser" FROM "User" ORDER BY "id" LIMIT $1 OFFSET $2
+      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "isAdminUser", "rank", "token", "user_secret", "user_sol_address", "username" FROM "User" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getUserUsingFriends_question_user_id_fkey(user_id: ID!): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "isAdminUser", "rank", "token", "user_secret", "user_sol_address", "username" FROM "User" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -157,16 +312,58 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "token", "user_secret", "user_sol_address", "username", "isAdminUser" FROM "User" WHERE "id" = $1
+      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "isAdminUser", "rank", "token", "user_secret", "user_sol_address", "username" FROM "User" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
-  getUserUsingUpdate_user_user_id_fkey(user_id: ID!): User
+  getUserUsingQuestions_user_id_fkey(user_id: ID!): User
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "token", "user_secret", "user_sol_address", "username", "isAdminUser" FROM "User" WHERE "id" = $1
+      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "isAdminUser", "rank", "token", "user_secret", "user_sol_address", "username" FROM "User" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getUserUsingUser_friend_user_id_fkey(user_id: ID!): User
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "badge", "coins", "created_at", "email", "full_name", "id", "image", "isAdminUser", "rank", "token", "user_secret", "user_sol_address", "username" FROM "User" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'User_friend' "
+  getUser_friend(id: ID!): User_friend
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "user_friend"
+      configuration: "postgresql_config"
+    )
+  getUser_friendList: [User_friend]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "user_friend"
+      configuration: "postgresql_config"
+    )
+  getUser_friendPaginatedList(first: Int, after: Int): [User_friend]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "friend_accepted", "friend_id", "friend_image", "friend_name", "id", "user_id" FROM "user_friend" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getUser_friendUsingUser_friend_user_id_fkey(id: ID!): [User_friend]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "created_at", "friend_accepted", "friend_id", "friend_image", "friend_name", "id", "user_id" FROM "user_friend" WHERE "user_id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -177,6 +374,94 @@ The following mutations are just a set of examples of how to access your schema.
 Feel free to modify them or aggregate more.
 """
 type Mutation {
+  " Mutations for type 'Chellenge_quiz' "
+  deleteChellenge_quiz(id: ID!): Chellenge_quiz
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Chellenge_quiz"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertChellenge_quiz(
+    has_friend_played: Boolean
+    friend_name: String
+    created_at: DateTime
+    user_name: String
+  ): Chellenge_quiz
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Chellenge_quiz"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateChellenge_quiz(
+    id: ID!
+    has_friend_played: Boolean
+  ): Chellenge_quiz
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "Chellenge_quiz" SET
+        "has_friend_played" = COALESCE($2, "has_friend_played"),
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'Friends_question' "
+  deleteFriends_question(id: ID!): Friends_question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "friends_question"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertFriends_question(
+    question: String
+    user_id: ID
+    answer_a: String
+    correct_answer: String
+    answer_b: String
+    created_at: DateTime!
+  ): Friends_question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "friends_question"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateFriends_question(
+    id: ID!
+    answer_a: String
+    answer_b: String
+    correct_answer: String
+    created_at: DateTime
+    question: String
+    user_id: ID
+  ): Friends_question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "friends_question" SET
+        "answer_a" = COALESCE($2, "answer_a"),
+        "answer_b" = COALESCE($3, "answer_b"),
+        "correct_answer" = COALESCE($4, "correct_answer"),
+        "created_at" = COALESCE($5, "created_at"),
+        "question" = COALESCE($6, "question"),
+        "user_id" = COALESCE($7, "user_id")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
   " Mutations for type 'History' "
   deleteHistory(id: ID!): History
     @dbquery(
@@ -187,11 +472,11 @@ type Mutation {
       configuration: "postgresql_config"
     )
   insertHistory(
-    created_at: DateTime
+    created_at: DateTime!
     title: String
+    descriptions: String
     user_id: ID
     amount: Float
-    descriptions: String
   ): History
     @dbquery(
       type: "postgresql"
@@ -204,9 +489,9 @@ type Mutation {
     id: ID!
     amount: Float
     created_at: DateTime
+    descriptions: String
     title: String
     user_id: ID
-    descriptions: String
   ): History
     @dbquery(
       type: "postgresql"
@@ -215,8 +500,50 @@ type Mutation {
       UPDATE "history" SET
         "amount" = COALESCE($2, "amount"),
         "created_at" = COALESCE($3, "created_at"),
-        "title" = COALESCE($4, "title"),
-        "user_id" = COALESCE($5, "user_id")
+        "descriptions" = COALESCE($4, "descriptions"),
+        "title" = COALESCE($5, "title"),
+        "user_id" = COALESCE($6, "user_id")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'Notifications' "
+  deleteNotifications(id: ID!): Notifications
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Notifications"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertNotifications(
+    user_email: String
+    message: String
+    created_at: DateTime!
+  ): Notifications
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "Notifications"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateNotifications(
+    id: ID!
+    created_at: DateTime
+    message: String
+    user_email: String
+  ): Notifications
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "Notifications" SET
+        "created_at" = COALESCE($2, "created_at"),
+        "message" = COALESCE($3, "message"),
+        "user_email" = COALESCE($4, "user_email")
       WHERE
         "id" = $1
       RETURNING *
@@ -235,13 +562,12 @@ type Mutation {
   insertQuestions(
     question: String
     question_level: String
+    user_id: ID
     answer_c: String
     question_type: String
     answer_a: String
     correct_answer: String
-    id: ID!
     answer_b: String
-    user_id: ID
     created_at: DateTime!
   ): Questions
     @dbquery(
@@ -258,10 +584,10 @@ type Mutation {
     answer_c: String
     correct_answer: String
     created_at: DateTime
-
     question: String
     question_level: String
     question_type: String
+    user_id: ID
   ): Questions
     @dbquery(
       type: "postgresql"
@@ -273,16 +599,16 @@ type Mutation {
         "answer_c" = COALESCE($4, "answer_c"),
         "correct_answer" = COALESCE($5, "correct_answer"),
         "created_at" = COALESCE($6, "created_at"),
-        "question" = COALESCE($8, "question"),
-        "question_level" = COALESCE($9, "question_level"),
-        "question_type" = COALESCE($10, "question_type")
+        "question" = COALESCE($7, "question"),
+        "question_level" = COALESCE($8, "question_level"),
+        "question_type" = COALESCE($9, "question_type"),
+        "user_id" = COALESCE($10, "user_id")
       WHERE
         "id" = $1
       RETURNING *
       """
       configuration: "postgresql_config"
     )
-  
   " Mutations for type 'User' "
   deleteUser(id: ID!): User
     @dbquery(
@@ -295,15 +621,16 @@ type Mutation {
   insertUser(
     user_secret: String
     email: String
+    rank: Float
     user_sol_address: String
+    isAdminUser: Boolean
     token: Float
     badge: String
+    username: String
     full_name: String
     image: String
-    created_at: DateTime
+    created_at: DateTime!
     coins: Float
-    username: String
-    isAdminUser: Boolean
   ): User
     @dbquery(
       type: "postgresql"
@@ -320,9 +647,12 @@ type Mutation {
     email: String
     full_name: String
     image: String
+    isAdminUser: Boolean
+    rank: Float
     token: Float
     user_secret: String
     user_sol_address: String
+    username: String
   ): User
     @dbquery(
       type: "postgresql"
@@ -335,25 +665,80 @@ type Mutation {
         "email" = COALESCE($5, "email"),
         "full_name" = COALESCE($6, "full_name"),
         "image" = COALESCE($7, "image"),
-        "token" = COALESCE($8, "token"),
-        "user_secret" = COALESCE($9, "user_secret"),
-        "user_sol_address" = COALESCE($10, "user_sol_address")
+        "isAdminUser" = COALESCE($8, "isAdminUser"),
+        "rank" = COALESCE($9, "rank"),
+        "token" = COALESCE($10, "token"),
+        "user_secret" = COALESCE($11, "user_secret"),
+        "user_sol_address" = COALESCE($12, "user_sol_address"),
+        "username" = COALESCE($13, "username")
       WHERE
         "id" = $1
       RETURNING *
       """
       configuration: "postgresql_config"
     )
-  updateUserCoins(
+    updateUserCoins(
     id: ID!
-    coins: Float
-  ): User
+      coins: Float
+    ): User
+      @dbquery(
+        type: "postgresql"
+        schema: "public"
+        query: """
+          UPDATE "User" SET
+          "coins" = COALESCE($2, "coins")
+          WHERE
+          "id" = $1
+          RETURNING *
+        """
+        configuration: "postgresql_config"
+    )
+
+  " Mutations for type 'User_friend' "
+  deleteUser_friend(id: ID!): User_friend
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "user_friend"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertUser_friend(
+    friend_accepted: Boolean
+    user_id: ID
+    friend_name: String
+    id: ID!
+    created_at: DateTime!
+    friend_image: String
+    friend_id: ID
+  ): User_friend
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "user_friend"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateUser_friend(
+    id: ID!
+    created_at: DateTime
+    friend_accepted: Boolean
+    friend_id: ID
+    friend_image: String
+    friend_name: String
+    user_id: ID
+  ): User_friend
     @dbquery(
       type: "postgresql"
       schema: "public"
       query: """
-      UPDATE "User" SET
-        "coins" = COALESCE($2, "coins")
+      UPDATE "user_friend" SET
+        "created_at" = COALESCE($2, "created_at"),
+        "friend_accepted" = COALESCE($3, "friend_accepted"),
+        "friend_id" = COALESCE($4, "friend_id"),
+        "friend_image" = COALESCE($5, "friend_image"),
+        "friend_name" = COALESCE($6, "friend_name"),
+        "user_id" = COALESCE($7, "user_id")
       WHERE
         "id" = $1
       RETURNING *
@@ -361,3 +746,4 @@ type Mutation {
       configuration: "postgresql_config"
     )
 }
+

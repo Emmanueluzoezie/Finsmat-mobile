@@ -13,6 +13,7 @@ import { useQuery } from '@apollo/client'
 import { GET_USER_BY_EMAIL } from '../graphql/queries'
 import { history } from '../utilies/WelcomeArrayItems'
 import LoadingAppComponent from './LoadingAppComponent'
+import { useNavigation } from '@react-navigation/native'
 
 
 const ProfileComponent = () => {
@@ -21,16 +22,13 @@ const ProfileComponent = () => {
   const getUserInfo = useSelector(selectUserInfo) 
   const userRank = useSelector(selectUserRank)
   const appTheme = useSelector(selectAppTheme)
+  const navigation = useNavigation()
 
   const { data, loading, error} = useQuery(GET_USER_BY_EMAIL, {
     variables: {
       email: getUserInfo?.email
     }
   })
-
-  if (loading) {
-    console.log("loading...")
-  }
 
   const userInfo = data?.getUserByEmail[0]
  
@@ -108,11 +106,8 @@ const ProfileComponent = () => {
               <Text style={[tailwind`text-[12px] mt-2 font-semibold capitalize`, { color: textColor, fontFamily: 'Lato-Bold' }]}>{userInfo?.coins}</Text>
             </View>
             <View style={tailwind` flex-1 items-center justify-center`}>
-              <View style={tailwind`flex-row items-center justify-center`}>
-                <FontAwesome5 name="coins" size={20} color={appColor.secondaryColor} />
-                <Text style={[tailwind`text-[15px] font-semibold pl-1`, { color, fontFamily: 'Lato-Bold' }]}>Token</Text>
-              </View>
-              <Text style={[tailwind`text-[12px] mt-2 font-semibold`, { color: textColor, fontFamily: 'Lato-Bold' }]}>{userInfo?.token}</Text>
+                <Text style={[tailwind`text-[15px] font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Bal</Text>
+                <Text style={[tailwind`text-[12px] mt-2 font-semibold`, { color: textColor, fontFamily: 'Lato-Bold' }]}>{userInfo?.token} SOL</Text>
             </View>
           </View>
           <HistoryLink />

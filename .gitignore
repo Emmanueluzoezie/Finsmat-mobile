@@ -36,3 +36,4 @@ yarn-error.*
 *.tsbuildinfo
 /utilities/solana.ts
 utilities/solana.ts
+solana.ts

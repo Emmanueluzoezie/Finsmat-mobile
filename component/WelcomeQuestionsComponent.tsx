@@ -14,6 +14,8 @@ const WelcomeQuestionsComponent = () => {
   const appTheme = useSelector(selectAppTheme);
   const bounceValue = new Animated.Value(0);
 
+  
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,7 +45,7 @@ const WelcomeQuestionsComponent = () => {
             source={require("../assets/logoimage.png")}
             style={[styles.image, { transform: [{ scale: bounceValue }] }]}
           />
-          <Text style={[tailwind`text-[24px]`, {fontFamily: "Lato-Bold", color: appColor.primaryColor}]}>FINANSMART</Text>
+          <Text style={[tailwind`text-[24px]`, {fontFamily: "Lato-Bold", color: appColor.primaryColor ,}]}>FINANSMART</Text>
           <Text style={[tailwind`text-[14px]`, {fontFamily: "Lato-Bold", color: appColor.primaryColor}]}>Get smarter with your money</Text>
         </View>
         :
@@ -72,5 +74,7 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+    
   },
+
 });

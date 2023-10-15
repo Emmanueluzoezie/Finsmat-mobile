@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import tailwind from 'twrnc'
 import HeaderWithTwoItems from '../component/HeaderWithTwoItems'
@@ -27,14 +27,6 @@ const LeaderShipBoardScreen = () => {
     }
   })
 
-  if (loading) {
-    console.log("loading...")
-  }
-
-  if (error) {
-    console.log("errors:", error)
-  }
-
   const userInfo = data?.getUserByEmail[0]
 
 
@@ -55,10 +47,24 @@ const LeaderShipBoardScreen = () => {
       tailwind`flex-1`,
       { backgroundColor: bgColor }
     ]}>
-     <View style={tailwind`flex-1`}>
-        <LeaderBoardHeader userInfo={userInfo} />
-        <LeaderBoardComponent />
-     </View>
+      {loading ?
+        <View style={tailwind`flex-1`}>
+          <ActivityIndicator size="small" color={borderColor} />
+        </View>
+        :
+        error ?
+          <View style={[tailwind`flex-1 justify-center items-center`,]}>
+            <Text style={[tailwind`text-[16px]`, { color, fontFamily: "Lato-Bold" }]}>Oops! An error occur in our end. Check your internet connection and try again</Text>
+            <TouchableOpacity style={[tailwind`justify-center items-center px-4 mt-6 py-2 rounded-md`, { backgroundColor: borderColor }]} onPress={() => navigation.goBack()}>
+              <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }]}>Click to reload</Text>
+            </TouchableOpacity>
+          </View>
+          :
+        <View style={tailwind`flex-1`}>
+            <LeaderBoardHeader userInfo={userInfo} />
+            <LeaderBoardComponent />
+        </View>
+      }
       <BottomNavigationContainer />
     </View>
   )

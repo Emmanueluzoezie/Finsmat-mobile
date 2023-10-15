@@ -52,34 +52,28 @@ const WelcomeResult = () => {
                   tailwind`p-2 px-2 mb-4 font-bold rounded-lg flex-row items-center`,
             ]}>
                 {/* <Ionicons name="checkmark-circle" size={20} color={bgColor} /> */}
-                  <Text style={[
-                      tailwind`text-[15px]`,
-                      { color: color, }
-                  ]}>Congratulations, you have been rewarded <Text style={[tailwind`font-bold`,{color: buttonColor}]}>20 Points</Text></Text>
             </View>
             <Image
-                source={{ uri: randomGif }}
+                  source={{ uri: "https://media4.giphy.com/media/j0A8PCnlz49qt1BWCD/giphy.gif" }}
                 style={{ width: 300, height: 300 }}
             />
               <View style={tailwind`p-4 mt-4 `}>
-                  <View style={[tailwind`p-5 rounded-md`, { backgroundColor: containerColor }]}>
+                  <View style={[tailwind`p-5 rounded-md`, ]}>
                       <Text style={[
-                          tailwind`text-[15px] text-center`,
-                          { color: color, fontWeight: "500" }
-                      ]}>Imagine that if you saved just half of the {getCurrencyInfo.symbol}{Number(welcomeAmount) / 2} you spend on {userTreatItem} every day, you could have built up a substantial savings. In one year, you will get</Text>
-                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: color }
-                      ]}>{getCurrencyInfo.symbol}{" "}{oneYearReturn}</Text>
-                      <Text style={[tailwind`text-[15px] text-center`,{ color: color }
-                      ]}>In five year, you will get</Text>
-                      <Text style={[tailwind`text-[14px] text-center font-bold`, { color: color }
-                      ]}>{getCurrencyInfo.symbol}{" "}{fiveYearReturn}</Text>
-                      <Text style={tailwind`font-semibold`}></Text>
+                          tailwind`text-[20px] text-center`,
+                          { color: color, fontFamily:  "Lato-Bold" }
+                      ]}>In one year you lost <Text style={[tailwind`text-[22px] text-center font-bold`, { color: appColor.primaryColor }
+                      ]}>{getCurrencyInfo.symbol}{" "}{oneYearReturn}</Text> on {userTreatItem}.</Text>
+                      
                       <Text style={[
-                          tailwind`text-[16px] font-bold text-center mt-5`,
+                          tailwind`text-[30px] font-bold text-center mt-5`,
                           {color: color}
                       ]}>#{hashword}</Text>
                   </View>
               </View>
+            <Text style={[tailwind`text-[18px] text-center px-3`,
+                      { color: color, }
+                  ]}>Congratulations, you have been rewarded <Text style={[tailwind``, { color: buttonColor, fontFamily: "Lato-Bold" }]}>20 Points</Text></Text>
             <View style={{ zIndex: 20 }}>
             <TouchableOpacity style={[tailwind`py-2 my-4 rounded-md`,
             {

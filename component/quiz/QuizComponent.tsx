@@ -25,7 +25,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("daily_quiz")}
         title="Daily quiz"
-        paragraph="Click to play now and get all question right to earn 50 coins. 10 coins for each."
+        paragraph="Click to play now and get all question right to earn 50 points. 10 points for each."
         notification={false}
         />
       <QuizNotification
@@ -34,7 +34,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("savings_quiz")}
         title="Saving quiz"
-        paragraph="Click to play now and get all question right to earn 50 coins.  10 coins for each."
+        paragraph="Click to play now and get all question right to earn 50 points.  10 points for each."
         notification={true}
         />
       <QuizNotification
@@ -43,7 +43,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("budget_quiz")}
         title="Budget quiz"
-        paragraph="Click to play now and get all question right to earn 50 coins. 10 coins for each."
+        paragraph="Click to play now and get all question right to earn 50 points. 10 points for each."
         notification={false}
         />
       <QuizNotification
@@ -52,7 +52,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("compound_quiz")}
         title="Compound quiz"
-        paragraph="Click to play now and get all question right to earn 50 coins. 10 coins for each."
+        paragraph="Click to play now and get all question right to earn 50 points. 10 points for each."
         notification={false}
         />
       <QuizNotification
@@ -61,7 +61,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("investment_quiz")}
         title="Investment quiz"
-        paragraph="Click to play now and get all question right to earn 50 coins. 10 coins for each."
+        paragraph="Click to play now and get all question right to earn 50 points. 10 points for each."
         notification={true}
         />
       <QuizNotification
@@ -70,7 +70,7 @@ const QuizComponent = () => {
         color={color}
         onPress={() => navigation.navigate("friends_quiz")}
         title="Quiz with friends"
-        paragraph="Click to play and get all question right to earn 100 coins. 10 coins for each."
+        paragraph="Click to play and get all question right to earn 100 points. 10 points for each."
         notification={true}
         />
     </View>

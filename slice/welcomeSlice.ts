@@ -13,6 +13,7 @@ interface AppWelcomeState {
     showResult: boolean
     nameOfItem: string
     welcomeAmount: string
+    timeTreat: string
 }
 
 const initialState: AppWelcomeState = {
@@ -24,6 +25,7 @@ const initialState: AppWelcomeState = {
     showResult: false,
     nameOfItem: "Junk",
     welcomeAmount: "",
+    timeTreat: "Daily",
 }
 
 export const welcomeSlice = createSlice({
@@ -42,16 +44,20 @@ export const welcomeSlice = createSlice({
         setWelcomeAmount: (state, action: PayloadAction<string>) => {
             state.welcomeAmount = action.payload;
         },
+        setTreatTimes: (state, action: PayloadAction<string>) => {
+            state.timeTreat = action.payload;
+        },
     }
 });
 
-export const { setCurrencyInfo, setShowResult, setWelcomeAmount, setNameOfItem } = welcomeSlice.actions;
+export const { setCurrencyInfo, setShowResult, setWelcomeAmount, setNameOfItem, setTreatTimes } = welcomeSlice.actions;
 
 export const selectedCurrencyInfo = (state: RootState) => state.welcome.currencyInfo
 export const selectShowResult = (state: RootState) => state.welcome.showResult
 export const selectTotalResult = (state: RootState) => state.welcome.showResult
 export const selectNameOfItem = (state: RootState) => state.welcome.nameOfItem
 export const selectWelcomeAmount = (state: RootState) => state.welcome.welcomeAmount
+export const selectTreatTime = (state: RootState) => state.welcome.timeTreat
 export default welcomeSlice.reducer;
 
 

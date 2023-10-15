@@ -1,5 +1,5 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import tailwind from 'twrnc'
 import { useSelector } from 'react-redux'
 import { selectAppTheme } from '../slice/AppSlices'
@@ -10,6 +10,7 @@ import { useQuery } from '@apollo/client'
 import { GET_ALL_HISTORY_BY_ID } from '../graphql/queries'
 
 const HistoryLink = () => {
+  const [top3History, setTop3History] = useState([])
   const appTheme = useSelector(selectAppTheme)
   const getUserId = useSelector(selectUserId)
   const navigation = useNavigation()
@@ -30,14 +31,20 @@ const HistoryLink = () => {
 
   const color = appTheme === "dark" ? appColor.darkTextColor : appColor.lightTextColor
 
-  historyList?.sort((a, b) => b.amount - a.amount);
-  const top3History = historyList?.slice(0, 4);
 
-  return (
+  useEffect(() => {
+    if(data){
+      const sortedHistory = historyList?.slice().sort((a, b) => b.amount - a.amount);
+      setTop3History(sortedHistory?.slice(0, 3))
+    }
+    
+  }, [data])
+
+  return ( 
     <View style={tailwind`flex-1`}>
       {loading?
         <View style={tailwind`flex-1`}>
-          <ActivityIndicator size="large" color={borderColor} />
+          <ActivityIndicator size="small" color={borderColor} />
         </View>
         :
         error ?
@@ -49,7 +56,7 @@ const HistoryLink = () => {
           </View>
         :
         <View style={tailwind`mt-8`}>
-          {historyList.length > 0 ?
+            {top3History.length > 0 ?
             <View>
               <View style={tailwind`flex-row items-center justify-between px-2`}>
                 <Text style={[tailwind`text-[16px] pb-1 font-semibold`, { color, fontFamily: 'Lato-Bold' }]}>Top 3 Achievements</Text>

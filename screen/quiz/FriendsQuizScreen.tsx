@@ -7,16 +7,20 @@ import { appColor } from '../../component/AppColor'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { selectAppTheme } from '../../slice/AppSlices'
 import { useDispatch, useSelector } from 'react-redux'
-import SingleQuizComponent from '../../component/quiz/SingleQuizComponent'
-import ResultComponent from '../../component/ResultComponent'
-import { resetAnsweredQuestions, selectAnswerQuestions } from '../../slice/QuizSlice'
-import ResultParentComponent from '../../component/ResultParentComponent'
+import { selectedFriendForQuiz, selectFriendDetails, selectQuizId, selectQuizTypeOfUser } from '../../slice/QuizSlice'
 import QuizLoadingComponent from '../../component/quiz/QuizLoadingComponent'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { GET_ALL_QUESTION_BY_TYPE } from '../../graphql/queries'
+import FriendsSingleQuizComponent from '../../component/quiz/FriendsSingleQuizComponent'
+import FriendsQuizResultComponent from '../../component/FriendsQuizResultComponent'
+import QuizFriendsListComponent from '../../component/QuizFriendsListComponent'
+import { ADD_QUIZ_WITH_FRIEND, UPDATE_QUIZ_WITH_FRIEND } from '../../graphql/mutations'
+import { selectUserInfo } from '../../slice/userSlice'
 
 const FriendsQuizScreen = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const selectedFriend = useSelector(selectedFriendForQuiz)
+  const selectFriendDetail = useSelector(selectFriendDetails)
   const [showResultComponent, setShowResultComponent] = useState(false)
   const [showInstruction, setShowInstruction] = useState(true)
   const [startQuiz, setStartQuiz] = useState(false)
@@ -26,6 +30,13 @@ const FriendsQuizScreen = () => {
   const [percentage, setPercentage] = useState(0)
   const [currentQuestion, setCurrentQuestion] = useState<any>()
   const route = useRoute().name
+  const getUserInfo = useSelector(selectUserInfo)
+  const quizUserType = useSelector(selectQuizTypeOfUser)
+  const quiz_id = useSelector(selectQuizId)
+
+  const [addQuizWithFriend] = useMutation(ADD_QUIZ_WITH_FRIEND)
+
+  const [updateQuizWithFriend] = useMutation(UPDATE_QUIZ_WITH_FRIEND)
 
   const { data, loading, error } = useQuery(GET_ALL_QUESTION_BY_TYPE, {
     variables: {
@@ -43,7 +54,27 @@ const FriendsQuizScreen = () => {
 
   const questions = data?.getQuestionsByType?.slice(0, 5)
 
-  const handleStartQuiz = () => {
+  const handleStartQuiz = async() => {
+
+    if (quizUserType === "challenger"){
+      await addQuizWithFriend({
+        variables:{
+          has_friend_played: false,
+          friend_name: selectFriendDetail?.friend_name,
+          created_at: new Date(),
+          user_name: getUserInfo.name
+        }
+      })
+    }else{
+      await updateQuizWithFriend({
+        variables:{
+          id: quiz_id,
+          has_friend_played: true,
+        }
+      })
+    }
+
+
     setStartQuiz(true)
     setRemainingTime(120);
     setShowResultComponent(false);
@@ -58,8 +89,7 @@ const FriendsQuizScreen = () => {
         return prevTime - 1;
       });
     }, 1000);
-  };
-
+  }
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -86,6 +116,7 @@ const FriendsQuizScreen = () => {
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime % 60;
 
+
   return (
     <View style={[
       tailwind`flex-1`,
@@ -104,7 +135,7 @@ const FriendsQuizScreen = () => {
         :
         <View style={tailwind`flex-1`}>
           {showResultComponent ?
-            <ResultParentComponent questions={questions} questionType={route}/>
+            <FriendsQuizResultComponent questions={questions} questionType={route}/>
             :
             <View style={tailwind`flex-1`}>
               <View style={[tailwind`flex-row items-center pt-10 pb-3 px-3 pr-10`, { backgroundColor: containerColor }]}>
@@ -118,13 +149,21 @@ const FriendsQuizScreen = () => {
               </View>
 
               {!startQuiz ?
-                <View style={tailwind`flex-1 justify-center`}>
-                  <Text style={[tailwind`pt-4 px-3 text-[16px] text-center mt-[-100px]`, { color, fontFamily: 'Lato-Regular' }]}>You have 2 mins to answer five Questions, and your time start immediately you click on the start quiz button. please read the question and your selected answer carefully. Once you click Next button, you will not be able to return to the previous question. and make sure you click on the next button after answering the question before the time runs out</Text>
-                  <View style={[tailwind`px-10 mt-10`]}>
-                    <TouchableOpacity style={[tailwind`justify-center items-center py-2 rounded-md`, { backgroundColor: buttonColor }]} onPress={handleStartQuiz}>
-                      <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }]}>Start Quiz</Text>
-                    </TouchableOpacity>
-                  </View>
+                <View style={tailwind`flex-1`}>
+                    <Text style={[tailwind`pt-4 px-3 text-[16px] text-center`, { color, fontFamily: 'Lato-Regular' }]}> Click on the friend you want to have quiz with. You and the selected friend have 2 mins to answer ten(10) Questions, and your time start immediately you click on the start quiz button. please read the question and your selected answer carefully. Once you click Next button, you will not be able to return to the previous question. and make sure you click on the next button after answering the question before the time runs out</Text>
+                  {selectedFriend?
+                    <View style={tailwind`mt-6`}>
+                        <Text style={[tailwind`font-semibold text-center text-[18px] capitalize pl-3`, { color, fontFamily: 'Lato-Bold' }]}>Selected friend</Text>
+                        <Text style={[tailwind`pt-2 px-3 text-[16px] text-center`, { color, fontFamily: 'Lato-Regular' }]}>You have chosen to engage in a friendly quiz with <Text style={[tailwind`pt-2 capitalize px-3 text-[16px] text-center`, { color, fontFamily: 'Lato-Bold' }]}>{selectFriendDetail?.friend_name}</Text>. It's time to test your knowledge and have a great time competing in this quiz challenge</Text>
+                        <View style={[tailwind`px-10 mt-10`]}>
+                          <TouchableOpacity style={[tailwind`justify-center items-center py-2 rounded-md`, { backgroundColor: buttonColor }]} onPress={handleStartQuiz}>
+                            <Text style={[tailwind`font-bold text-[16px]`, { color: appTheme === "dark" ? appColor.lightTextColor : appColor.darkTextColor, fontFamily: 'Lato-Bold' }]}>Start Quiz</Text>
+                          </TouchableOpacity>
+                        </View>
+                    </View>
+                    :
+                      <QuizFriendsListComponent />
+                  }
                 </View>
                 :
                 <View style={tailwind`flex-1`}>
@@ -150,10 +189,9 @@ const FriendsQuizScreen = () => {
                       </View>
                     </View>
                   </View>
-                  <SingleQuizComponent
+                  <FriendsSingleQuizComponent
                     answerOne={currentQuestion?.answer_a}
                     answerTwo={currentQuestion?.answer_b}
-                    answerThree={currentQuestion?.answer_c}
                     question={currentQuestion?.question}
                     correctAnswer={currentQuestion?.correct_answer}
                     handleNext={handleNext}

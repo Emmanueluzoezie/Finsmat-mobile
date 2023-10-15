@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect } from 'react'
 import tailwind from 'twrnc'
 import { useDispatch, useSelector } from 'react-redux'
@@ -29,6 +29,7 @@ const DashBoardScreen = () => {
     useEffect(() => {
         dispatch(setCurrentScreen(route))
     }, [route])
+
 
     return (
         <View style={[

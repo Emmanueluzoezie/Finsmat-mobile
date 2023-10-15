@@ -10,10 +10,23 @@ interface AnsweredQuestion {
 
 interface AppQuizState {
     answeredQuestions: AnsweredQuestion[];
+    question: string;
+    friendDetails: SelectFriendType
+    selectedFriend: boolean 
+    quizTypeOfUser: string
+    quiz_id: string
 }
 
 const initialState: AppQuizState = {
     answeredQuestions: [],
+    question: "Saving",
+    friendDetails: {
+        friend_id: "",
+        friend_name: "",
+    },
+    selectedFriend: false,
+    quizTypeOfUser: "challenger",
+    quiz_id: ""
 }
 
 export const questionSlice = createSlice({
@@ -26,10 +39,30 @@ export const questionSlice = createSlice({
         resetAnsweredQuestions: (state) => {
             state.answeredQuestions = [];
         },
+        setQuestion: (state, action: PayloadAction<string>) => {
+            state.question = action.payload;
+        },
+        setSelectedFriend: (state, action: PayloadAction<boolean>) => {
+            state.selectedFriend = action.payload;
+        },
+        setFriendDetails: (state, action: PayloadAction<SelectFriendType>) => {
+            state.friendDetails = action.payload;
+        },
+        setQuizTypeOfUser: (state, action: PayloadAction<string>) => {
+            state.quizTypeOfUser = action.payload;
+        },
+        setQuizId: (state, action: PayloadAction<string>) => {
+            state.quiz_id = action.payload;
+        },
     }
 });
 
-export const { addAnsweredQuestions, resetAnsweredQuestions } = questionSlice.actions;
+export const { addAnsweredQuestions, resetAnsweredQuestions, setQuestion, setFriendDetails, setSelectedFriend, setQuizTypeOfUser, setQuizId } = questionSlice.actions;
 
 export const selectAnswerQuestions = (state: RootState) => state.question.answeredQuestions
+export const selectQuestion = (state: RootState) => state.question.question
+export const selectedFriendForQuiz = (state: RootState) => state.question.selectedFriend
+export const selectFriendDetails = (state: RootState) => state.question.friendDetails
+export const selectQuizTypeOfUser = (state: RootState) => state.question.quizTypeOfUser
+export const selectQuizId = (state: RootState) => state.question.quiz_id
 export default questionSlice.reducer;
